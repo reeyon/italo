@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Monero And Italocoin Project
 // 
 // All rights reserved.
 // 
@@ -41,6 +41,7 @@
 
 #include "memwipe.h"
 #include "hash.h"
+#include "crypto/cn_slow_hash.hpp"
 
 namespace crypto {
   extern "C" {
@@ -69,17 +70,19 @@ namespace crypto {
     chacha20(data, length, key.data(), reinterpret_cast<const uint8_t*>(&iv), cipher);
   }
 
-  inline void generate_chacha_key(const void *data, size_t size, chacha_key& key) {
+ inline void generate_chacha_key(const void *data, size_t size, chacha_key& key) {
     static_assert(sizeof(chacha_key) <= sizeof(hash), "Size of hash must be at least that of chacha_key");
     tools::scrubbed_arr<char, HASH_SIZE> pwd_hash;
-    crypto::cn_slow_hash(data, size, pwd_hash.data(), 0/*variant*/, 0/*prehashed*/);
+    static thread_local cn_pow_hash_v1 ctx;
+    ctx.hash(data, size, pwd_hash.data());
     memcpy(&unwrap(key), pwd_hash.data(), sizeof(key));
   }
 
   inline void generate_chacha_key_prehashed(const void *data, size_t size, chacha_key& key) {
     static_assert(sizeof(chacha_key) <= sizeof(hash), "Size of hash must be at least that of chacha_key");
     tools::scrubbed_arr<char, HASH_SIZE> pwd_hash;
-    crypto::cn_slow_hash(data, size, pwd_hash.data(), 0/*variant*/, 1/*prehashed*/);
+    static thread_local cn_pow_hash_v1 ctx;
+    ctx.hash(data, size, pwd_hash.data(), true);
     memcpy(&unwrap(key), pwd_hash.data(), sizeof(key));
   }
 

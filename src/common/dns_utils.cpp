@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Monero And Italocoin Project
 //
 // All rights reserved.
 //
@@ -370,18 +370,18 @@ std::string address_from_txt_record(const std::string& s)
   return {};
 }
 /**
- * @brief gets a monero address from the TXT record of a DNS entry
+ * @brief gets a italocoin address from the TXT record of a DNS entry
  *
- * gets the monero address from the TXT record of the DNS entry associated
+ * gets the italocoin address from the TXT record of the DNS entry associated
  * with <url>.  If this lookup fails, or the TXT record does not contain an
- * XMR address in the correct format, returns an empty string.  <dnssec_valid>
+ * ITA address in the correct format, returns an empty string.  <dnssec_valid>
  * will be set true or false according to whether or not the DNS query passes
  * DNSSEC validation.
  *
  * @param url the url to look up
  * @param dnssec_valid return-by-reference for DNSSEC status of query
  *
- * @return a monero address (as a string) or an empty string
+ * @return a italocoin address (as a string) or an empty string
  */
 std::vector<std::string> addresses_from_url(const std::string& url, bool& dnssec_valid)
 {
@@ -398,7 +398,7 @@ std::vector<std::string> addresses_from_url(const std::string& url, bool& dnssec
   }
   else dnssec_valid = false;
 
-  // for each txt record, try to find a monero address in it.
+  // for each txt record, try to find a italocoin address in it.
   for (auto& rec : records)
   {
     std::string addr = address_from_txt_record(rec);
@@ -505,7 +505,7 @@ bool load_txt_records_from_dns(std::vector<std::string> &good_records, const std
 
   if (num_valid_records < 2)
   {
-    LOG_PRINT_L0("WARNING: no two valid MoneroPulse DNS checkpoint records were received");
+    LOG_PRINT_L0("WARNING: no two valid ItalocoinPulse DNS checkpoint records were received");
     return false;
   }
 
@@ -527,7 +527,7 @@ bool load_txt_records_from_dns(std::vector<std::string> &good_records, const std
 
   if (good_records_index < 0)
   {
-    LOG_PRINT_L0("WARNING: no two MoneroPulse DNS checkpoint records matched");
+    LOG_PRINT_L0("WARNING: no two ItalocoinPulse DNS checkpoint records matched");
     return false;
   }
 

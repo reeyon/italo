@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Monero And Italocoin Project
 // 
 // All rights reserved.
 // 
@@ -1094,7 +1094,7 @@ namespace Language
       "mokadi",
       "molaro",
       "momento",
-      "monero",
+      "italocoin",
       "mopso",
       "mordi",
       "moskito",

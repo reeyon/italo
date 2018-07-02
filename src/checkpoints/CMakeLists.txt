@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018, The Monero Project
+# Copyright (c) 2014-2018, The Monero And Italocoin Project
 #
 # All rights reserved.
 #
@@ -40,9 +40,9 @@ set(checkpoints_headers)
 set(checkpoints_private_headers
   checkpoints.h)
 
-monero_private_headers(checkpoints
+italocoin_private_headers(checkpoints
   ${checkpoints_private_headers})
-monero_add_library(checkpoints
+italocoin_add_library(checkpoints
   ${checkpoints_sources}
   ${checkpoints_headers}
   ${checkpoints_private_headers})

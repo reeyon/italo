@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Monero And Italocoin Project
 //
 // All rights reserved.
 //
@@ -163,52 +163,33 @@ namespace cryptonote
   {
     if (nettype == TESTNET)
     {
-      ADD_CHECKPOINT(0,     "48ca7cd3c8de5b6a4d53d2861fbdaedca141553559f9be9520068053cda8430b");
-      ADD_CHECKPOINT(1000000, "46b690b710a07ea051bc4a6b6842ac37be691089c0f7758cfeec4d5fc0b4a258");
+
       return true;
     }
     if (nettype == STAGENET)
     {
-      ADD_CHECKPOINT(0,       "76ee3cc98646292206cd3e86f74d88b4dcc1d937088645e9b0cbca84b7ce74eb");
-      ADD_CHECKPOINT(10000,   "1f8b0ce313f8b9ba9a46108bfd285c45ad7c2176871fd41c3a690d4830ce2fd5");
+
       return true;
     }
-    ADD_CHECKPOINT(1,     "771fbcd656ec1464d3a02ead5e18644030007a0fc664c0a964d30922821a8148");
-    ADD_CHECKPOINT(10,    "c0e3b387e47042f72d8ccdca88071ff96bff1ac7cde09ae113dbb7ad3fe92381");
-    ADD_CHECKPOINT(100,   "ac3e11ca545e57c49fca2b4e8c48c03c23be047c43e471e1394528b1f9f80b2d");
-    ADD_CHECKPOINT(1000,  "5acfc45acffd2b2e7345caf42fa02308c5793f15ec33946e969e829f40b03876");
-    ADD_CHECKPOINT(10000, "c758b7c81f928be3295d45e230646de8b852ec96a821eac3fea4daf3fcac0ca2");
-    ADD_CHECKPOINT(22231, "7cb10e29d67e1c069e6e11b17d30b809724255fee2f6868dc14cfc6ed44dfb25");
-    ADD_CHECKPOINT(29556, "53c484a8ed91e4da621bb2fa88106dbde426fe90d7ef07b9c1e5127fb6f3a7f6");
-    ADD_CHECKPOINT(50000, "0fe8758ab06a8b9cb35b7328fd4f757af530a5d37759f9d3e421023231f7b31c");
-    ADD_CHECKPOINT(80000, "a62dcd7b536f22e003ebae8726e9e7276f63d594e264b6f0cd7aab27b66e75e3");
-    ADD_CHECKPOINT(202612, "bbd604d2ba11ba27935e006ed39c9bfdd99b76bf4a50654bc1e1e61217962698");
-    ADD_CHECKPOINT(202613, "e2aa337e78df1f98f462b3b1e560c6b914dec47b610698b7b7d1e3e86b6197c2");
-    ADD_CHECKPOINT(202614, "c29e3dc37d8da3e72e506e31a213a58771b24450144305bcba9e70fa4d6ea6fb");
-    ADD_CHECKPOINT(205000, "5d3d7a26e6dc7535e34f03def711daa8c263785f73ec1fadef8a45880fde8063");
-    ADD_CHECKPOINT(220000, "9613f455933c00e3e33ac315cc6b455ee8aa0c567163836858c2d9caff111553");
-    ADD_CHECKPOINT(230300, "bae7a80c46859db355556e3a9204a337ae8f24309926a1312323fdecf1920e61");
-    ADD_CHECKPOINT(230700, "93e631240ceac831da1aebfc5dac8f722c430463024763ebafa888796ceaeedf");
-    ADD_CHECKPOINT(231350, "b5add137199b820e1ea26640e5c3e121fd85faa86a1e39cf7e6cc097bdeb1131");
-    ADD_CHECKPOINT(232150, "955de8e6b6508af2c24f7334f97beeea651d78e9ade3ab18fec3763be3201aa8");
-    ADD_CHECKPOINT(249380, "654fb0a81ce3e5caf7e3264a70f447d4bd07586c08fa50f6638cc54da0a52b2d");
-    ADD_CHECKPOINT(460000, "75037a7aed3e765db96c75bcf908f59d690a5f3390baebb9edeafd336a1c4831");
-    ADD_CHECKPOINT(500000, "2428f0dbe49796be05ed81b347f53e1f7f44aed0abf641446ec2b94cae066b02");
-    ADD_CHECKPOINT(600000, "f5828ebf7d7d1cb61762c4dfe3ccf4ecab2e1aad23e8113668d981713b7a54c5");
-    ADD_CHECKPOINT(700000, "12be9b3d210b93f574d2526abb9c1ab2a881b479131fd0d4f7dac93875f503cd");
-    ADD_CHECKPOINT(825000, "56503f9ad766774b575be3aff73245e9d159be88132c93d1754764f28da2ff60");
-    ADD_CHECKPOINT(900000, "d9958d0e7dcf91a5a7b11de225927bf7efc6eb26240315ce12372be902cc1337");
-    ADD_CHECKPOINT(913193, "5292d5d56f6ba4de33a58d9a34d263e2cb3c6fee0aed2286fd4ac7f36d53c85f");
-    ADD_CHECKPOINT(1000000, "a886ef5149902d8342475fee9bb296341b891ac67c4842f47a833f23c00ed721");
-    ADD_CHECKPOINT(1100000, "3fd720c5c8b3072fc1ccda922dec1ef25f9ed88a1e6ad4103d0fe00b180a5903");
-    ADD_CHECKPOINT(1150000, "1dd16f626d18e1e988490dfd06de5920e22629c972c58b4d8daddea0038627b2");
-    ADD_CHECKPOINT(1200000, "fa7d13a90850882060479d100141ff84286599ae39c3277c8ea784393f882d1f");
-    ADD_CHECKPOINT(1300000, "31b34272343a44a9f4ac7de7a8fcf3b7d8a3124d7d6870affd510d2f37e74cd0");
-    ADD_CHECKPOINT(1390000, "a8f5649dd4ded60eedab475f2bec8c934681c07e3cf640e9be0617554f13ff6c");
-    ADD_CHECKPOINT(1450000, "ac94e8860093bc7c83e4e91215cba1d663421ecf4067a0ae609c3a8b52bcfac2");
-    ADD_CHECKPOINT(1530000, "01759bce497ec38e63c78b1038892169203bb78f87e488172f6b854fcd63ba7e");
-    ADD_CHECKPOINT(1579000, "7d0d7a2346373afd41ed1e744a939fc5d474a7dbaa257be5c6fff4009e789241");
-
+    ADD_CHECKPOINT(1,     "851b5a2f42d7331c7caaaadfffcb9ffd74b5550e4511ba63eb1896ac4a52bf23");
+    ADD_CHECKPOINT(10,    "9d425b4f22c06b1ba0cc745c668382956549f7c91575fcd7ed2b1671c1f756fe");
+    ADD_CHECKPOINT(100,   "76a829f386450eee12c90adcfec1bdd9e66901678ed36488cfeeda16bd67c2af");
+    ADD_CHECKPOINT(1000,  "327144eacf486f6acfbe638ea83172a5de97a45cfd24e2f97fa63b70bb545fab");
+    ADD_CHECKPOINT(2000,  "5a5b35955132462c65605aea5b9e6939343629b8cbb165cb712127dbb2140faa");
+    ADD_CHECKPOINT(2500,  "d53225967b2af50ff86e30ed5e98fc0f9fee03f10cd3cf3148cb81a300aa7d2e");
+    ADD_CHECKPOINT(3000,  "f8076b940fd39ca51b34274f64510a8c41ac25848a84f9d3ab368b9d40926c96");
+    ADD_CHECKPOINT(4000,  "9da93821bed76cfc4206cb468f230be2218ffb5f1aca47279e52eab2001a86b6");
+    ADD_CHECKPOINT(4500,  "2b2295cbfb1ce2b56a00270eeb73cb619b5c2d5643088851c8398ef4d9bfeef8");
+    ADD_CHECKPOINT(5000,  "15dd04efb175b0eb53505b8955539fc060e7b52ca0f896ddb8814fa4a93d7be7");
+    ADD_CHECKPOINT(5700,  "ebdadcad6b25c34c7878ecf7e3af234f4b761797adfe2deeecb1b4fb4ddad6f4");
+    ADD_CHECKPOINT(10000,  "8351d90f74ff78463ca80bb814e6fa8b4d918b4301a3ef4c1365be4b5d0972b5");
+    ADD_CHECKPOINT(15000,  "e9e96917c02ddaa0277a010a763f2b3434a7478538d01a5afece5fa10546fb9c");
+    ADD_CHECKPOINT(20000,  "237d453ba3940d7a83934527a3f4775368bc9d6c3ebe094485de37e0f80454ec");
+    ADD_CHECKPOINT(30000,  "c688cc6e04a001800c1af60073409ec18be851b798b15962b89ba5b42660b8fa");
+    ADD_CHECKPOINT(31500,  "48cec3d8af328d18cd198933de0d1bfb5ace456244e36d1af2673e67fa74ab0a");
+    ADD_CHECKPOINT(51000,  "5d96a2aee1ce04225c3d80d5a784caa73c3711285e7a332c3aaeb2a746684f7f");
+    ADD_CHECKPOINT(51600,  "7cb2405bcbfba74c2161538824e6ba0e2bd2c61d93e4762a60770b9b75d931d9");
+	
     return true;
   }
 
@@ -252,23 +233,17 @@ namespace cryptonote
   {
     std::vector<std::string> records;
 
-    // All four MoneroPulse domains have DNSSEC on and valid
-    static const std::vector<std::string> dns_urls = { "checkpoints.moneropulse.se"
-						     , "checkpoints.moneropulse.org"
-						     , "checkpoints.moneropulse.net"
-						     , "checkpoints.moneropulse.co"
+    // All four ItalocoinPulse domains have DNSSEC on and valid
+    static const std::vector<std::string> dns_urls = { 
+	
     };
 
-    static const std::vector<std::string> testnet_dns_urls = { "testpoints.moneropulse.se"
-							     , "testpoints.moneropulse.org"
-							     , "testpoints.moneropulse.net"
-							     , "testpoints.moneropulse.co"
+    static const std::vector<std::string> testnet_dns_urls = { 
+	
     };
 
-    static const std::vector<std::string> stagenet_dns_urls = { "stagenetpoints.moneropulse.se"
-                   , "stagenetpoints.moneropulse.org"
-                   , "stagenetpoints.moneropulse.net"
-                   , "stagenetpoints.moneropulse.co"
+    static const std::vector<std::string> stagenet_dns_urls = { 
+	
     };
 
     if (!tools::dns_utils::load_txt_records_from_dns(records, nettype == TESTNET ? testnet_dns_urls : nettype == STAGENET ? stagenet_dns_urls : dns_urls))

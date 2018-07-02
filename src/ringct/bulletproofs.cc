@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018, The Monero Project
+// Copyright (c) 2017-2018, The Monero And Italocoin Project
 // 
 // All rights reserved.
 // 
@@ -567,10 +567,29 @@ Bulletproof bulletproof_PROVE(uint64_t v, const rct::key &gamma)
   return bulletproof_PROVE(sv, gamma);
 }
 
+static bool check_point(const rct::key &p)
+{
+  if (!(rct::scalarmultKey(p, rct::curveOrder()) == rct::identity()))
+    return false;
+  return true;
+}
+
 /* Given a range proof, determine if it is valid */
 bool bulletproof_VERIFY(const Bulletproof &proof)
 {
   init_exponents();
+
+  // check subgroup
+  for (const rct::key &k: proof.V)
+    CHECK_AND_ASSERT_MES(check_point(k), false, "Input point not in subgroup");
+  for (const rct::key &k: proof.L)
+    CHECK_AND_ASSERT_MES(check_point(k), false, "Input point not in subgroup");
+  for (const rct::key &k: proof.R)
+    CHECK_AND_ASSERT_MES(check_point(k), false, "Input point not in subgroup");
+    CHECK_AND_ASSERT_MES(check_point(proof.A), false, "Input point not in subgroup");
+    CHECK_AND_ASSERT_MES(check_point(proof.S), false, "Input point not in subgroup");
+    CHECK_AND_ASSERT_MES(check_point(proof.T1), false, "Input point not in subgroup");
+    CHECK_AND_ASSERT_MES(check_point(proof.T2), false, "Input point not in subgroup");
 
   CHECK_AND_ASSERT_MES(proof.V.size() == 1, false, "V does not have exactly one element");
   CHECK_AND_ASSERT_MES(proof.L.size() == proof.R.size(), false, "Mismatched L and R sizes");

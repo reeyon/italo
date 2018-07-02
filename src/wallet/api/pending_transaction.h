@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Monero And Italocoin Project
 //
 // All rights reserved.
 //
@@ -35,7 +35,7 @@
 #include <vector>
 
 
-namespace Monero {
+namespace Italocoin {
 
 class WalletImpl;
 class PendingTransactionImpl : public PendingTransaction
@@ -72,4 +72,4 @@ private:
 
 }
 
-namespace Bitmonero = Monero;
+namespace Bititalocoin = Italocoin;

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero Project
+// Copyright (c) 2014-2018, The Monero And Italocoin Project
 // 
 // All rights reserved.
 // 
@@ -358,11 +358,14 @@ void BlockchainDB::show_stats()
 
 void BlockchainDB::fixup()
 {
+  set_batch_transactions(true);
+  return;
+
+  /* 
   if (is_read_only()) {
     LOG_PRINT_L1("Database is opened read only - skipping fixup check");
     return;
   }
-
   // There was a bug that would cause key images for transactions without
   // any outputs to not be added to the spent key image set. There are two
   // instances of such transactions, in blocks 202612 and 685498.
@@ -374,7 +377,6 @@ void BlockchainDB::fixup()
   epee::string_tools::hex_to_pod(mainnet_genesis_hex, mainnet_genesis_hash );
   set_batch_transactions(true);
   batch_start();
-
   if (get_block_hash_from_height(0) == mainnet_genesis_hash)
   {
     // block 202612 (511 key images in 511 transactions)
@@ -909,7 +911,6 @@ void BlockchainDB::fixup()
       "272d9b9fcc9e253c08da9caf8233471150019582eaefef461c1f9ceff7e2c337",
       "633cdedeb3b96ec4f234c670254c6f721e0b368d00b48c6b26759db7d62cf52d",
     };
-
     if (height() > 202612)
     {
       for (const auto &kis: key_images_202612)
@@ -938,6 +939,7 @@ void BlockchainDB::fixup()
     }
   }
   batch_stop();
+  */
 }
 
 }  // namespace cryptonote
