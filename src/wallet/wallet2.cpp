@@ -950,6 +950,7 @@ void wallet2::expand_subaddresses(const cryptonote::subaddress_index& index)
     }
     m_subaddress_labels.resize(index.major + 1, {"Untitled account"});
     m_subaddress_labels[index.major].resize(index.minor + 1);
+    get_account_tags();
   }
   else if (m_subaddress_labels[index.major].size() <= index.minor)
   {
@@ -1172,6 +1173,7 @@ void wallet2::process_new_transaction(const crypto::hash &txid, const cryptonote
   // Don't try to extract tx public key if tx has no ouputs
   size_t pk_index = 0;
   std::vector<tx_scan_info_t> tx_scan_info(tx.vout.size());
+  std::unordered_set<crypto::public_key> public_keys_seen;
   while (!tx.vout.empty())
   {
     // if tx.vout is not empty, we loop through all tx pubkeys
@@ -1191,6 +1193,13 @@ void wallet2::process_new_transaction(const crypto::hash &txid, const cryptonote
       THROW_WALLET_EXCEPTION_IF(tx_cache_data.primary.size() < pk_index || pub_key_field.pub_key != tx_cache_data.primary[pk_index - 1].pkey,
           error::wallet_internal_error, "tx_cache_data is out of sync");
     }
+
+    if (public_keys_seen.find(pub_key_field.pub_key) != public_keys_seen.end())
+    {
+      MWARNING("The same transaction pubkey is present more than once, ignoring extra instance");
+      continue;
+    }
+    public_keys_seen.insert(pub_key_field.pub_key);
 
     int num_vouts_received = 0;
     tx_pub_key = pub_key_field.pub_key;
@@ -1216,16 +1225,19 @@ void wallet2::process_new_transaction(const crypto::hash &txid, const cryptonote
         memcpy(&derivation, rct::identity().bytes, sizeof(derivation));
       }
 
-      // additional tx pubkeys and derivations for multi-destination transfers involving one or more subaddresses
-      if (find_tx_extra_field_by_type(tx_extra_fields, additional_tx_pub_keys))
+      if (pk_index == 1)
       {
-        for (size_t i = 0; i < additional_tx_pub_keys.data.size(); ++i)
+        // additional tx pubkeys and derivations for multi-destination transfers involving one or more subaddresses
+        if (find_tx_extra_field_by_type(tx_extra_fields, additional_tx_pub_keys))
         {
-          additional_derivations.push_back({});
-          if (!hwdev.generate_key_derivation(additional_tx_pub_keys.data[i], keys.m_view_secret_key, additional_derivations.back()))
+          for (size_t i = 0; i < additional_tx_pub_keys.data.size(); ++i)
           {
-            MWARNING("Failed to generate key derivation from additional tx pubkey in " << txid << ", skipping");
-            memcpy(&additional_derivations.back(), rct::identity().bytes, sizeof(crypto::key_derivation));
+            additional_derivations.push_back({});
+            if (!hwdev.generate_key_derivation(additional_tx_pub_keys.data[i], keys.m_view_secret_key, additional_derivations.back()))
+            {
+              MWARNING("Failed to generate key derivation from additional tx pubkey in " << txid << ", skipping");
+              memcpy(&additional_derivations.back(), rct::identity().bytes, sizeof(crypto::key_derivation));
+            }
           }
         }
       }
@@ -1236,10 +1248,13 @@ void wallet2::process_new_transaction(const crypto::hash &txid, const cryptonote
           error::wallet_internal_error, "pk_index out of range of tx_cache_data");
       is_out_data_ptr = &tx_cache_data.primary[pk_index - 1];
       derivation = tx_cache_data.primary[pk_index - 1].derivation;
-      for (size_t n = 0; n < tx_cache_data.additional.size(); ++n)
+      if (pk_index == 1)
       {
-        additional_tx_pub_keys.data.push_back(tx_cache_data.additional[n].pkey);
-        additional_derivations.push_back(tx_cache_data.additional[n].derivation);
+        for (size_t n = 0; n < tx_cache_data.additional.size(); ++n)
+        {
+          additional_tx_pub_keys.data.push_back(tx_cache_data.additional[n].pkey);
+          additional_derivations.push_back(tx_cache_data.additional[n].derivation);
+        }
       }
     }
 
@@ -5051,7 +5066,7 @@ bool wallet2::sign_tx(unsigned_tx_set &exported_txs, const std::string &signed_f
     return false;
   }
 
-  if (!epee::file_io_utils::save_string_to_file(signed_filename, std::string(SIGNED_TX_PREFIX) + ciphertext))
+  if (!epee::file_io_utils::save_string_to_file(signed_filename, ciphertext))
   {
     LOG_PRINT_L0("Failed to save file to " << signed_filename);
     return false;
@@ -9857,7 +9872,7 @@ uint64_t wallet2::import_key_images(const std::vector<std::pair<crypto::key_imag
   std::unordered_set<crypto::hash> spent_txids;   // For each spent key image, search for a tx in m_transfers that uses it as input.
   std::vector<size_t> swept_transfers;            // If such a spending tx wasn't found in m_transfers, this means the spending tx 
                                                   // was created by sweep_all, so we can't know the spent height and other detailed info.
-  for(size_t i = 0; i < m_transfers.size(); ++i)
+  for(size_t i = 0; i < signed_key_images.size(); ++i)
   {
     transfer_details &td = m_transfers[i];
     uint64_t amount = td.amount();
