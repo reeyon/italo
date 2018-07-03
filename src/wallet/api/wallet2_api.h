@@ -900,6 +900,13 @@ struct Wallet
     
     //! Initiates a light wallet import wallet request
     virtual bool lightWalletImportWalletRequest(std::string &payment_id, uint64_t &fee, bool &new_request, bool &request_fulfilled, std::string &payment_address, std::string &status) = 0;
+
+    //! locks/unlocks the keys file; returns true on success
+    virtual bool lockKeysFile() = 0;
+    virtual bool unlockKeysFile() = 0;
+    //! returns true if the keys file is locked
+    virtual bool isKeysFileLocked() = 0;
+
 };
 
 /**
