@@ -502,6 +502,9 @@ Installing a snap is very quick. Snaps are secure. They are isolated with all of
         # or in background
         docker run -it -d -v /italocoin/chain:/root/.bititalocoin -v /italocoin/wallet:/wallet -p 18080:18080 italocoin
 
+* The build needs 3 GB space.
+* Wait one  hour or more
+
 Packaging for your favorite distribution would be a welcome contribution!
 
 ## Running italocoind
