@@ -58,7 +58,7 @@ endif()
 set(device_private_headers)
 
 
-monero_private_headers(device
+italocoin_private_headers(device
   ${device_private_headers})
 
 italocoin_add_library(device

@@ -81,16 +81,13 @@ italocoin_private_headers(blockchain_usage
 
 
 
-<<<<<<< HEAD
-italocoin_add_executable(blockchain_import
-=======
 set(blockchain_ancestry_sources
   blockchain_ancestry.cpp
   )
 
 set(blockchain_ancestry_private_headers)
 
-monero_private_headers(blockchain_ancestry
+italocoin_private_headers(blockchain_ancestry
 	  ${blockchain_ancestry_private_headers})
 
 
@@ -101,13 +98,12 @@ set(blockchain_depth_sources
 
 set(blockchain_depth_private_headers)
 
-monero_private_headers(blockchain_depth
+italocoin_private_headers(blockchain_depth
 	  ${blockchain_depth_private_headers})
 
 
 
-monero_add_executable(blockchain_import
->>>>>>> monero/master
+italocoin_add_executable(blockchain_import
   ${blockchain_import_sources}
   ${blockchain_import_private_headers})
 
@@ -174,11 +170,7 @@ target_link_libraries(blockchain_blackball
 
 set_property(TARGET blockchain_blackball
 	PROPERTY
-<<<<<<< HEAD
-	OUTPUT_NAME "italocoin-blockchain-blackball")
-=======
-	OUTPUT_NAME "monero-blockchain-mark-spent-outputs")
->>>>>>> monero/master
+	OUTPUT_NAME "italocoin-blockchain-mark-spent-outputs")
 install(TARGETS blockchain_blackball DESTINATION bin)
 
 
@@ -203,7 +195,7 @@ set_property(TARGET blockchain_usage
 	OUTPUT_NAME "italocoin-blockchain-usage")
 install(TARGETS blockchain_usage DESTINATION bin)
 
-monero_add_executable(blockchain_ancestry
+italocoin_add_executable(blockchain_ancestry
   ${blockchain_ancestry_sources}
   ${blockchain_ancestry_private_headers})
 
@@ -221,10 +213,10 @@ target_link_libraries(blockchain_ancestry
 
 set_property(TARGET blockchain_ancestry
 	PROPERTY
-	OUTPUT_NAME "monero-blockchain-ancestry")
+	OUTPUT_NAME "italocoin-blockchain-ancestry")
 install(TARGETS blockchain_ancestry DESTINATION bin)
 
-monero_add_executable(blockchain_depth
+italocoin_add_executable(blockchain_depth
   ${blockchain_depth_sources}
   ${blockchain_depth_private_headers})
 
@@ -242,6 +234,6 @@ target_link_libraries(blockchain_depth
 
 set_property(TARGET blockchain_depth
 	PROPERTY
-	OUTPUT_NAME "monero-blockchain-depth")
+	OUTPUT_NAME "italocoin-blockchain-depth")
 install(TARGETS blockchain_depth DESTINATION bin)
 

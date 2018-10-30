@@ -1187,10 +1187,6 @@ namespace tools
 
     void set_tx_notify(const std::shared_ptr<tools::Notify> &notify) { m_tx_notify = notify; }
 
-    bool lock_keys_file();
-    bool unlock_keys_file();
-    bool is_keys_file_locked() const;
-    
   private:
     /*!
      * \brief  Stores wallet information to wallet file.

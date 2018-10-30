@@ -441,11 +441,11 @@ namespace cryptonote
       std::vector<blobdata> have_tx;
       
       // Instead of requesting missing transactions by hash like BTC, 
-      // we do it by index (thanks to a suggestion from moneromooo) because
+      // we do it by index (thanks to a suggestion from italocoinmooo) because
       // we're way cooler .. and also because they're smaller than hashes.
       // 
       // Also, remember to pepper some whitespace changes around to bother
-      // moneromooo ... only because I <3 him. 
+      // italocoinmooo ... only because I <3 him. 
       std::vector<uint64_t> need_tx_indices;
         
       transaction tx;
@@ -485,7 +485,7 @@ namespace cryptonote
           }
           
           // hijacking m_requested objects in connection context to patch up
-          // a possible DOS vector pointed out by @moneromoo where peers keep
+          // a possible DOS vector pointed out by @italocoinmoo where peers keep
           // sending (0...n-1) transactions.
           // If requested objects is not empty, then we must have asked for 
           // some missing transacionts, make sure that they're all there.
@@ -529,7 +529,7 @@ namespace cryptonote
             // future todo: 
             // tx should only not be added to pool if verification failed, but
             // maybe in the future could not be added for other reasons 
-            // according to moneromoo so keep track of these separately ..
+            // according to italocoinmoo so keep track of these separately ..
             //
           }
         }

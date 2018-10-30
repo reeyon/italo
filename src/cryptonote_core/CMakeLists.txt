@@ -41,7 +41,7 @@ set(cryptonote_core_private_headers
   tx_pool.h
   cryptonote_tx_utils.h)
 
-monero_private_headers(cryptonote_core
+italocoin_private_headers(cryptonote_core
   ${cryptonote_core_private_headers})
 italocoin_add_library(cryptonote_core
   ${cryptonote_core_sources}
