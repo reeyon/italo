@@ -119,7 +119,8 @@ namespace cryptonote
   //-----------------------------------------------------------------------------------------------------
   miner::~miner()
   {
-    stop();
+    try { stop(); }
+    catch (...) { /* ignore */ }
   }
   //-----------------------------------------------------------------------------------------------------
   bool miner::set_block_template(const block& bl, const difficulty_type& di, uint64_t height)
@@ -196,8 +197,9 @@ namespace cryptonote
       {
         uint64_t total_hr = std::accumulate(m_last_hash_rates.begin(), m_last_hash_rates.end(), 0);
         float hr = static_cast<float>(total_hr)/static_cast<float>(m_last_hash_rates.size());
+        const auto flags = std::cout.flags();
         const auto precision = std::cout.precision();
-        std::cout << "hashrate: " << std::setprecision(4) << std::fixed << hr << precision << ENDL;
+        std::cout << "hashrate: " << std::setprecision(4) << std::fixed << hr << std::setiosflags(flags) << std::setprecision(precision) << ENDL;
       }
     }
     m_last_hr_merge_time = misc_utils::get_tick_count();
@@ -487,7 +489,7 @@ namespace cryptonote
       {
         //we lucky!
         ++m_config.current_extra_message_index;
-        MGINFO_GREEN("Found block for difficulty: " << local_diff);
+        MGINFO_GREEN("Found block " << get_block_hash(b) << " at height " << height << " for difficulty: " << local_diff);
         if(!m_phandler->handle_block_found(b))
         {
           --m_config.current_extra_message_index;
@@ -631,7 +633,7 @@ namespace cryptonote
         boost::tribool battery_powered(on_battery_power());
         if(!indeterminate( battery_powered ))
         {
-          on_ac_power = !battery_powered;
+          on_ac_power = !(bool)battery_powered;
         }
       }
 

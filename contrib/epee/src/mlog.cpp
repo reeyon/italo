@@ -28,6 +28,13 @@
 #ifndef _MLOG_H_
 #define _MLOG_H_
 
+#ifdef _WIN32
+#include <windows.h>
+#ifndef ENABLE_VIRTUAL_TERMINAL_PROCESSING
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING  0x0004
+#endif
+#endif
+
 #include <time.h>
 #include <atomic>
 #include <boost/filesystem.hpp>
@@ -97,7 +104,7 @@ static const char *get_default_categories(int level)
   switch (level)
   {
     case 0:
-      categories = "*:WARNING,net:FATAL,net.p2p:FATAL,net.cn:FATAL,global:INFO,verify:FATAL,stacktrace:INFO,logging:INFO,msgwriter:INFO";
+      categories = "*:WARNING,net:FATAL,net.http:FATAL,net.p2p:FATAL,net.cn:FATAL,global:INFO,verify:FATAL,stacktrace:INFO,logging:INFO,msgwriter:INFO";
       break;
     case 1:
       categories = "*:INFO,global:INFO,stacktrace:INFO,logging:INFO,msgwriter:INFO";
@@ -116,6 +123,31 @@ static const char *get_default_categories(int level)
   }
   return categories;
 }
+
+#ifdef WIN32
+bool EnableVTMode()
+{
+  // Set output mode to handle virtual terminal sequences
+  HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+  if (hOut == INVALID_HANDLE_VALUE)
+  {
+    return false;
+  }
+
+  DWORD dwMode = 0;
+  if (!GetConsoleMode(hOut, &dwMode))
+  {
+    return false;
+  }
+
+  dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+  if (!SetConsoleMode(hOut, dwMode))
+  {
+    return false;
+  }
+  return true;
+}
+#endif
 
 void mlog_configure(const std::string &filename_base, bool console, const std::size_t max_log_file_size, const std::size_t max_log_files)
 {
@@ -137,12 +169,19 @@ void mlog_configure(const std::string &filename_base, bool console, const std::s
   el::Loggers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
   el::Helpers::installPreRollOutCallback([filename_base, max_log_files](const char *name, size_t){
     std::string rname = generate_log_filename(filename_base.c_str());
-    rename(name, rname.c_str());
+    int ret = rename(name, rname.c_str());
+    if (ret < 0)
+    {
+      // can't log a failure, but don't do the file removal below
+      return;
+    }
     if (max_log_files != 0)
     {
       std::vector<boost::filesystem::path> found_files;
       const boost::filesystem::directory_iterator end_itr;
-      for (boost::filesystem::directory_iterator iter(boost::filesystem::path(filename_base).parent_path()); iter != end_itr; ++iter)
+      const boost::filesystem::path filename_base_path(filename_base);
+      const boost::filesystem::path parent_path = filename_base_path.has_parent_path() ? filename_base_path.parent_path() : ".";
+      for (boost::filesystem::directory_iterator iter(parent_path); iter != end_itr; ++iter)
       {
         const std::string filename = iter->path().string();
         if (filename.size() >= filename_base.size() && std::memcmp(filename.data(), filename_base.data(), filename_base.size()) == 0)
@@ -195,6 +234,9 @@ void mlog_configure(const std::string &filename_base, bool console, const std::s
     monero_log = get_default_categories(0);
   }
   mlog_set_log(monero_log);
+#ifdef WIN32
+  EnableVTMode();
+#endif
 }
 
 void mlog_set_categories(const char *categories)

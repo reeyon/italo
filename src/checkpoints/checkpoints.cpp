@@ -163,7 +163,6 @@ namespace cryptonote
   {
     if (nettype == TESTNET)
     {
-
       return true;
     }
     if (nettype == STAGENET)

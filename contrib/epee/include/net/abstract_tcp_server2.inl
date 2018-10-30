@@ -43,6 +43,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp> // TODO
 #include <boost/thread/thread.hpp> // TODO
 #include <boost/thread/condition_variable.hpp> // TODO
+#include "warnings.h"
+#include "string_tools.h"
 #include "misc_language.h"
 #include "net/local_ip.h"
 #include "pragma_comp_defs.h"
@@ -50,8 +52,6 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
-
-#include "../../../../src/cryptonote_core/cryptonote_core.h" // e.g. for the send_stop_signal()
 
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "net"
@@ -149,10 +149,8 @@ PRAGMA_WARNING_DISABLE_VS(4355)
     const unsigned long ip_{boost::asio::detail::socket_ops::host_to_network_long(remote_ep.address().to_v4().to_ulong())};
     m_local = epee::net_utils::is_ip_loopback(ip_) || epee::net_utils::is_ip_local(ip_);
 
-    // create a random uuid
-    boost::uuids::uuid random_uuid;
-    // that stuff turns out to be included, even though it's from src... Taking advantage
-    random_uuid = crypto::rand<boost::uuids::uuid>();
+    // create a random uuid, we don't need crypto strength here
+    const boost::uuids::uuid random_uuid = boost::uuids::random_generator()();
 
     context.set_details(random_uuid, epee::net_utils::ipv4_network_address(ip_, remote_ep.port()), is_income);
     _dbg3("[sock " << socket_.native_handle() << "] new connection from " << print_connection_context_short(context) <<
@@ -649,6 +647,10 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   template<class t_protocol_handler>
   bool connection<t_protocol_handler>::shutdown()
   {
+    CRITICAL_REGION_BEGIN(m_shutdown_lock);
+    if (m_was_shutdown)
+      return true;
+    m_was_shutdown = true;
     // Initiate graceful connection closure.
     m_timer.cancel();
     boost::system::error_code ignored_ec;
@@ -658,7 +660,7 @@ PRAGMA_WARNING_DISABLE_VS(4355)
       try { host_count(m_host, -1); } catch (...) { /* ignore */ }
       m_host = "";
     }
-    m_was_shutdown = true;
+    CRITICAL_REGION_END();
     m_protocol_handler.release_protocol();
     return true;
   }
@@ -667,6 +669,9 @@ PRAGMA_WARNING_DISABLE_VS(4355)
   bool connection<t_protocol_handler>::close()
   {
     TRY_ENTRY();
+    auto self = safe_shared_from_this();
+    if(!self)
+      return false;
     //_info("[sock " << socket_.native_handle() << "] Que Shutdown called.");
     m_timer.cancel();
     size_t send_que_size = 0;
@@ -1102,8 +1107,16 @@ POP_WARNINGS
     sock_.open(remote_endpoint.protocol());
     if(bind_ip != "0.0.0.0" && bind_ip != "0" && bind_ip != "" )
     {
-      boost::asio::ip::tcp::endpoint local_endpoint(boost::asio::ip::address::from_string(adr.c_str()), 0);
-      sock_.bind(local_endpoint);
+      boost::asio::ip::tcp::endpoint local_endpoint(boost::asio::ip::address::from_string(bind_ip.c_str()), 0);
+      boost::system::error_code ec;
+      sock_.bind(local_endpoint, ec);
+      if (ec)
+      {
+        MERROR("Error binding to " << bind_ip << ": " << ec.message());
+        if (sock_.is_open())
+          sock_.close();
+        return false;
+      }
     }
 
     /*
@@ -1208,8 +1221,16 @@ POP_WARNINGS
     sock_.open(remote_endpoint.protocol());
     if(bind_ip != "0.0.0.0" && bind_ip != "0" && bind_ip != "" )
     {
-      boost::asio::ip::tcp::endpoint local_endpoint(boost::asio::ip::address::from_string(adr.c_str()), 0);
-      sock_.bind(local_endpoint);
+      boost::asio::ip::tcp::endpoint local_endpoint(boost::asio::ip::address::from_string(bind_ip.c_str()), 0);
+      boost::system::error_code ec;
+      sock_.bind(local_endpoint, ec);
+      if (ec)
+      {
+        MERROR("Error binding to " << bind_ip << ": " << ec.message());
+        if (sock_.is_open())
+          sock_.close();
+        return false;
+      }
     }
     
     boost::shared_ptr<boost::asio::deadline_timer> sh_deadline(new boost::asio::deadline_timer(io_service_));

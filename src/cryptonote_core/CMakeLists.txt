@@ -41,13 +41,7 @@ set(cryptonote_core_private_headers
   tx_pool.h
   cryptonote_tx_utils.h)
 
-if(PER_BLOCK_CHECKPOINT)
-  set(Blocks "blocks")
-else()
-  set(Blocks "")
-endif()
-
-italocoin_private_headers(cryptonote_core
+monero_private_headers(cryptonote_core
   ${cryptonote_core_private_headers})
 italocoin_add_library(cryptonote_core
   ${cryptonote_core_sources}
@@ -69,5 +63,4 @@ target_link_libraries(cryptonote_core
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_THREAD_LIBRARY}
   PRIVATE
-    ${Blocks}
     ${EXTRA_LIBRARIES})
