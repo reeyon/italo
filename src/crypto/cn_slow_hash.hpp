@@ -31,7 +31,7 @@
 
 #pragma once
 
-#include <inttypes.h>
+#include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <assert.h>
