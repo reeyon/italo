@@ -1,4 +1,4 @@
-// Copyright (c) 2016, Italocoin Research Labs
+// Copyright (c) 2016, Italo Research Labs
 //
 // Author: Shen Noether <shen.noether@gmx.com>
 //
@@ -61,7 +61,7 @@ extern "C" {
 #define DP(x)
 #endif
 
-//atomic units of italocoins
+//atomic units of italos
 #define ATOMS 64
 
 //for printing large ints
@@ -130,7 +130,7 @@ namespace rct {
         BEGIN_SERIALIZE_OBJECT()
           FIELD(mask)
           FIELD(amount)
-          // FIELD(senderPk) // not serialized, as we do not use it in italocoin currently
+          // FIELD(senderPk) // not serialized, as we do not use it in italo currently
         END_SERIALIZE()
     };
 

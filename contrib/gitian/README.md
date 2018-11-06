@@ -1,9 +1,9 @@
 Gitian building
 ================
 
-*Setup instructions for a Gitian build of Monero using a VM or physical system.*
+*Setup instructions for a Gitian build of Italo using a VM or physical system.*
 
-Gitian is the deterministic build process that is used to build the Monero CLI
+Gitian is the deterministic build process that is used to build the Italo CLI
 executables. It provides a way to be reasonably sure that the
 executables are really built from the git source. It also makes sure that
 the same, tested dependencies are used and statically built into the executable.
@@ -87,7 +87,7 @@ Initial Gitian Setup
 The `gitian-build.py` script will checkout different release tags, so it's best to copy it:
 
 ```bash
-cp monero/contrib/gitian/gitian-build.py .
+cp italo/contrib/gitian/gitian-build.py .
 ```
 
 Setup the required environment, you only need to do this once:
@@ -105,7 +105,7 @@ fork the gitian.sigs repository and clone it on your host machine,
 or pass the signed assert file back to your build machine.
 
 ```
-git clone git@github.com:monero-project/gitian.sigs.git
+git clone git@github.com:italocoin-project/gitian.sigs.git
 git remote add fluffypony git@github.com:fluffypony/gitian.sigs.git
 ```
 
@@ -124,13 +124,13 @@ If you do detached, offline signing, you need to copy these uncommited changes t
 ```
 export NAME=fluffypony
 export VERSION=0.14
-gpg --output $VERSION-linux/$NAME/monero-linux-$VERSION-build.assert.sig --detach-sign $VERSION-linux/$NAME/monero-linux-$VERSION-build.assert
-gpg --output $VERSION-osx-unsigned/$NAME/monero-osx-$VERSION-build.assert.sig --detach-sign $VERSION-osx-unsigned/$NAME/monero-osx-$VERSION-build.assert
-gpg --output $VERSION-win-unsigned/$NAME/monero-win-$VERSION-build.assert.sig --detach-sign $VERSION-win-unsigned/$NAME/monero-win-$VERSION-build.assert
+gpg --output $VERSION-linux/$NAME/italo-linux-$VERSION-build.assert.sig --detach-sign $VERSION-linux/$NAME/italo-linux-$VERSION-build.assert
+gpg --output $VERSION-osx-unsigned/$NAME/italo-osx-$VERSION-build.assert.sig --detach-sign $VERSION-osx-unsigned/$NAME/italo-osx-$VERSION-build.assert
+gpg --output $VERSION-win-unsigned/$NAME/italo-win-$VERSION-build.assert.sig --detach-sign $VERSION-win-unsigned/$NAME/italo-win-$VERSION-build.assert
 ```
 
 Make a pull request (both the `.assert` and `.assert.sig` files) to the
-[monero-project/gitian.sigs](https://github.com/monero-project/gitian.sigs/) repository:
+[italocoin-project/gitian.sigs](https://github.com/italocoin-project/gitian.sigs/) repository:
 
 ```
 git checkout -b 0.14.0
@@ -139,8 +139,8 @@ git push --set-upstream $NAME 0.14.0
 ```
 
 ```bash
-    gpg --detach-sign ${VERSION}-linux/${SIGNER}/monero-linux-*-build.assert
-    gpg --detach-sign ${VERSION}-win-unsigned/${SIGNER}/monero-win-*-build.assert
-    gpg --detach-sign ${VERSION}-osx-unsigned/${SIGNER}/monero-osx-*-build.assert
+    gpg --detach-sign ${VERSION}-linux/${SIGNER}/italo-linux-*-build.assert
+    gpg --detach-sign ${VERSION}-win-unsigned/${SIGNER}/italo-win-*-build.assert
+    gpg --detach-sign ${VERSION}-osx-unsigned/${SIGNER}/italo-osx-*-build.assert
 ```
 

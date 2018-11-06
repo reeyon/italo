@@ -1,4 +1,4 @@
-// Copyright (c) 2016, Italocoin Research Labs
+// Copyright (c) 2016, Italo Research Labs
 //
 // Author: Shen Noether <shen.noether@gmx.com>
 // 

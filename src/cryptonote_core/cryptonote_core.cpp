@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -150,7 +150,7 @@ namespace cryptonote
   };
   static const command_line::arg_descriptor<std::string> arg_check_updates = {
     "check-updates"
-  , "Check for new versions of italocoin: [disabled|notify|download|update]"
+  , "Check for new versions of italo: [disabled|notify|download|update]"
   , "notify"
   };
   static const command_line::arg_descriptor<bool> arg_fluffy_blocks  = {
@@ -427,8 +427,8 @@ namespace cryptonote
       if (boost::filesystem::exists(old_files / "blockchain.bin"))
       {
         MWARNING("Found old-style blockchain.bin in " << old_files.string());
-        MWARNING("Italocoin now uses a new format. You can either remove blockchain.bin to start syncing");
-        MWARNING("the blockchain anew, or use italocoin-blockchain-export and italocoin-blockchain-import to");
+        MWARNING("Italo now uses a new format. You can either remove blockchain.bin to start syncing");
+        MWARNING("the blockchain anew, or use italo-blockchain-export and italo-blockchain-import to");
         MWARNING("convert your existing blockchain.bin to the new format. See README.md for instructions.");
         return false;
       }
@@ -806,7 +806,6 @@ namespace cryptonote
           break;
         case rct::RCTTypeSimple:
         case rct::RCTTypeSimpleBulletproof:
-        printf("IS RCTTypeSimpleBulletproof");
           if (!rct::verRctSemanticsSimple(rv))
           {
             MERROR_VER("rct signature semantics check failed");
@@ -818,7 +817,6 @@ namespace cryptonote
           break;
         case rct::RCTTypeFull:
         case rct::RCTTypeFullBulletproof:
-        printf("IS RCTTypeFullBulletproof");
           if (!rct::verRct(rv, true))
           {
             MERROR_VER("rct signature semantics check failed");
@@ -829,7 +827,6 @@ namespace cryptonote
           }
           break;
         case rct::RCTTypeBulletproof:
-        printf("IS RCTTypeBulletproof");
           if (!is_canonical_bulletproof_layout(rv.p.bulletproofs))
           {
             MERROR_VER("Bulletproof does not have canonical form");
@@ -1517,7 +1514,7 @@ namespace cryptonote
     {
       std::string main_message;
       if (m_offline)
-        main_message = "The daemon is running offline and will not attempt to sync to the Italocoin network.";
+        main_message = "The daemon is running offline and will not attempt to sync to the Italo network.";
       else
         main_message = "The daemon will start synchronizing with the network. This may take a long time to complete.";
       MGINFO_YELLOW(ENDL << "**********************************************************************" << ENDL
@@ -1586,7 +1583,7 @@ namespace cryptonote
   //-----------------------------------------------------------------------------------------------
   bool core::check_updates()
   {
-    static const char software[] = "italocoin";
+    static const char software[] = "italo";
 #ifdef BUILD_TAG
     static const char buildtag[] = BOOST_PP_STRINGIZE(BUILD_TAG);
     static const char subdir[] = "cli"; // because it can never be simple
@@ -1763,7 +1760,7 @@ namespace cryptonote
       MDEBUG("blocks in the last " << seconds[n] / 60 << " minutes: " << b << " (probability " << p << ")");
       if (p < threshold)
       {
-        MWARNING("There were " << b << " blocks in the last " << seconds[n] / 60 << " minutes, there might be large hash rate changes, or we might be partitioned, cut off from the Italocoin network or under attack. Or it could be just sheer bad luck.");
+        MWARNING("There were " << b << " blocks in the last " << seconds[n] / 60 << " minutes, there might be large hash rate changes, or we might be partitioned, cut off from the Italo network or under attack. Or it could be just sheer bad luck.");
         break; // no need to look further
       }
     }

@@ -1,8 +1,8 @@
 /// @file
-/// @author rfree (current maintainer in italocoin.cc project)
+/// @author rfree (current maintainer in italo.cc project)
 /// @brief This is the place to implement our handlers for protocol network actions, e.g. for ratelimit for download-requests
 
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 // 
 // All rights reserved.
 // 

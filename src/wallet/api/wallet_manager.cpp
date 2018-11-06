@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -47,7 +47,7 @@ namespace epee {
     unsigned int g_test_dbg_lock_sleep = 0;
 }
 
-namespace Italocoin {
+namespace Italo {
 
 Wallet *WalletManagerImpl::createWallet(const std::string &path, const std::string &password,
                                     const std::string &language, NetworkType nettype, uint64_t kdf_rounds)
@@ -384,4 +384,4 @@ void WalletManagerFactory::setLogCategories(const std::string &categories)
 
 }
 
-namespace Bititalocoin = Italocoin;
+namespace Bititalo = Italo;

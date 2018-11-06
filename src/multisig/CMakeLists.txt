@@ -1,4 +1,4 @@
-# Copyright (c) 2017-2018, The Monero And Italocoin Project
+# Copyright (c) 2017-2018, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -34,10 +34,10 @@ set(multisig_headers)
 set(multisig_private_headers
   multisig.h)
 
-italocoin_private_headers(multisig
+italo_private_headers(multisig
   ${multisig_private_headers})
 
-italocoin_add_library(multisig
+italo_add_library(multisig
   ${multisig_sources}
   ${multisig_headers}
   ${multisig_private_headers})

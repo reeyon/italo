@@ -1,4 +1,4 @@
-// Copyright (c) 2018, The Monero Project
+// Copyright (c) 2018, The Monero And Italo Project
 // 
 // All rights reserved.
 // 
@@ -44,7 +44,7 @@ TEST(notify, works)
 #ifdef __GLIBC__
   mode_t prevmode = umask(077);
 #endif
-  char name_template[] = "/tmp/monero-notify-unit-test-XXXXXX";
+  char name_template[] = "/tmp/italo-notify-unit-test-XXXXXX";
   int fd = mkstemp(name_template);
 #ifdef __GLIBC__
   umask(prevmode);

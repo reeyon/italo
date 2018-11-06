@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -35,7 +35,7 @@
 #include <vector>
 
 
-namespace Italocoin {
+namespace Italo {
 
 class WalletImpl;
 class UnsignedTransactionImpl : public UnsignedTransaction
@@ -72,4 +72,4 @@ private:
 
 }
 
-namespace Bititalocoin = Italocoin;
+namespace Bititalo = Italo;

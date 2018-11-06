@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -33,7 +33,7 @@
 
 using namespace std;
 
-namespace Italocoin {
+namespace Italo {
 
 TransactionInfo::~TransactionInfo() {}
 
@@ -140,4 +140,4 @@ uint64_t TransactionInfoImpl::unlockTime() const
 
 } // namespace
 
-namespace Bititalocoin = Italocoin;
+namespace Bititalo = Italo;

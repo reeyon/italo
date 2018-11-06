@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018, The Monero And Italocoin Project
+# Copyright (c) 2014-2018, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -38,7 +38,7 @@ set(blockchain_import_private_headers
   bootstrap_serialization.h
   )
 
-italocoin_private_headers(blockchain_import
+italo_private_headers(blockchain_import
 	  ${blockchain_import_private_headers})
 
 set(blockchain_export_sources
@@ -53,7 +53,7 @@ set(blockchain_export_private_headers
   bootstrap_serialization.h
   )
 
-italocoin_private_headers(blockchain_export
+italo_private_headers(blockchain_export
 	  ${blockchain_export_private_headers})
 
 
@@ -67,7 +67,7 @@ set(blockchain_blackball_private_headers
   bootstrap_serialization.h
   )
 
-italocoin_private_headers(blockchain_blackball
+italo_private_headers(blockchain_blackball
 	  ${blockchain_blackball_private_headers})
 
 set(blockchain_usage_sources
@@ -76,7 +76,7 @@ set(blockchain_usage_sources
 
 set(blockchain_usage_private_headers)
 
-italocoin_private_headers(blockchain_usage
+italo_private_headers(blockchain_usage
 	  ${blockchain_usage_private_headers})
 
 
@@ -87,7 +87,7 @@ set(blockchain_ancestry_sources
 
 set(blockchain_ancestry_private_headers)
 
-italocoin_private_headers(blockchain_ancestry
+italo_private_headers(blockchain_ancestry
 	  ${blockchain_ancestry_private_headers})
 
 
@@ -98,12 +98,12 @@ set(blockchain_depth_sources
 
 set(blockchain_depth_private_headers)
 
-italocoin_private_headers(blockchain_depth
+italo_private_headers(blockchain_depth
 	  ${blockchain_depth_private_headers})
 
 
 
-italocoin_add_executable(blockchain_import
+italo_add_executable(blockchain_import
   ${blockchain_import_sources}
   ${blockchain_import_private_headers})
 
@@ -127,10 +127,10 @@ endif()
 
 set_property(TARGET blockchain_import
 	PROPERTY
-	OUTPUT_NAME "italocoin-blockchain-import")
+	OUTPUT_NAME "italo-blockchain-import")
 install(TARGETS blockchain_import DESTINATION bin)
 
-italocoin_add_executable(blockchain_export
+italo_add_executable(blockchain_export
   ${blockchain_export_sources}
   ${blockchain_export_private_headers})
 
@@ -148,10 +148,10 @@ target_link_libraries(blockchain_export
 
 set_property(TARGET blockchain_export
 	PROPERTY
-	OUTPUT_NAME "italocoin-blockchain-export")
+	OUTPUT_NAME "italo-blockchain-export")
 install(TARGETS blockchain_export DESTINATION bin)
 
-italocoin_add_executable(blockchain_blackball
+italo_add_executable(blockchain_blackball
   ${blockchain_blackball_sources}
   ${blockchain_blackball_private_headers})
 
@@ -170,11 +170,11 @@ target_link_libraries(blockchain_blackball
 
 set_property(TARGET blockchain_blackball
 	PROPERTY
-	OUTPUT_NAME "italocoin-blockchain-mark-spent-outputs")
+	OUTPUT_NAME "italo-blockchain-mark-spent-outputs")
 install(TARGETS blockchain_blackball DESTINATION bin)
 
 
-italocoin_add_executable(blockchain_usage
+italo_add_executable(blockchain_usage
   ${blockchain_usage_sources}
   ${blockchain_usage_private_headers})
 
@@ -192,10 +192,10 @@ target_link_libraries(blockchain_usage
 
 set_property(TARGET blockchain_usage
 	PROPERTY
-	OUTPUT_NAME "italocoin-blockchain-usage")
+	OUTPUT_NAME "italo-blockchain-usage")
 install(TARGETS blockchain_usage DESTINATION bin)
 
-italocoin_add_executable(blockchain_ancestry
+italo_add_executable(blockchain_ancestry
   ${blockchain_ancestry_sources}
   ${blockchain_ancestry_private_headers})
 
@@ -213,10 +213,10 @@ target_link_libraries(blockchain_ancestry
 
 set_property(TARGET blockchain_ancestry
 	PROPERTY
-	OUTPUT_NAME "italocoin-blockchain-ancestry")
+	OUTPUT_NAME "italo-blockchain-ancestry")
 install(TARGETS blockchain_ancestry DESTINATION bin)
 
-italocoin_add_executable(blockchain_depth
+italo_add_executable(blockchain_depth
   ${blockchain_depth_sources}
   ${blockchain_depth_private_headers})
 
@@ -234,6 +234,6 @@ target_link_libraries(blockchain_depth
 
 set_property(TARGET blockchain_depth
 	PROPERTY
-	OUTPUT_NAME "italocoin-blockchain-depth")
+	OUTPUT_NAME "italo-blockchain-depth")
 install(TARGETS blockchain_depth DESTINATION bin)
 

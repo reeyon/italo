@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2017, The Monero And Italocoin Project
+# Copyright (c) 2014-2017, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -58,10 +58,10 @@ endif()
 set(device_private_headers)
 
 
-italocoin_private_headers(device
+italo_private_headers(device
   ${device_private_headers})
 
-italocoin_add_library(device
+italo_add_library(device
   ${device_sources}
   ${device_headers}
   ${device_private_headers})

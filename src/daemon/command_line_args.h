@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 // 
 // All rights reserved.
 // 
@@ -35,7 +35,7 @@
 
 namespace daemon_args
 {
-  std::string const WINDOWS_SERVICE_NAME = "Italocoin Daemon";
+  std::string const WINDOWS_SERVICE_NAME = "Italo Daemon";
 
   const command_line::arg_descriptor<std::string, false, true, 2> arg_config_file = {
     "config-file"

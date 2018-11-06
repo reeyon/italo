@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -32,7 +32,7 @@
 #include <string>
 #include <ctime>
 
-namespace Italocoin {
+namespace Italo {
 
 class TransactionHistoryImpl;
 
@@ -84,4 +84,4 @@ private:
 
 } // namespace
 
-namespace Bititalocoin = Italocoin;
+namespace Bititalo = Italo;

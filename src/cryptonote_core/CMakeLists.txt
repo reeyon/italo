@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018, The Monero And Italocoin Project
+# Copyright (c) 2014-2018, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -41,9 +41,9 @@ set(cryptonote_core_private_headers
   tx_pool.h
   cryptonote_tx_utils.h)
 
-italocoin_private_headers(cryptonote_core
+italo_private_headers(cryptonote_core
   ${cryptonote_core_private_headers})
-italocoin_add_library(cryptonote_core
+italo_add_library(cryptonote_core
   ${cryptonote_core_sources}
   ${cryptonote_core_headers}
   ${cryptonote_core_private_headers})

@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018, The Monero And Italocoin Project
+# Copyright (c) 2014-2018, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -34,9 +34,9 @@ set(simplewallet_headers)
 set(simplewallet_private_headers
   simplewallet.h)
 
-italocoin_private_headers(simplewallet
+italo_private_headers(simplewallet
   ${simplewallet_private_headers})
-italocoin_add_executable(simplewallet
+italo_add_executable(simplewallet
   ${simplewallet_sources}
   ${simplewallet_headers}
   ${simplewallet_private_headers})
@@ -60,5 +60,5 @@ target_link_libraries(simplewallet
     ${EXTRA_LIBRARIES})
 set_property(TARGET simplewallet
   PROPERTY
-    OUTPUT_NAME "italocoin-wallet-cli")
+    OUTPUT_NAME "italo-wallet-cli")
 install(TARGETS simplewallet DESTINATION bin)

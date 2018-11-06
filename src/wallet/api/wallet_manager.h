@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -33,7 +33,7 @@
 #include "net/http_client.h"
 #include <string>
 
-namespace Italocoin {
+namespace Italo {
 
 class WalletManagerImpl : public WalletManager
 {
@@ -101,4 +101,4 @@ private:
 
 } // namespace
 
-namespace Bititalocoin = Italocoin;
+namespace Bititalo = Italo;

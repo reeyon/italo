@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -127,7 +127,7 @@ namespace nodetool
     virtual std::map<std::string, time_t> get_blocked_hosts() { CRITICAL_REGION_LOCAL(m_blocked_hosts_lock); return m_blocked_hosts; }
   private:
     const std::vector<std::string> m_seed_nodes_list =
-    { "pool.italocoin.com"
+    { "pool.italo.com"
     , "atlas.sebgreen.net"
     };
 

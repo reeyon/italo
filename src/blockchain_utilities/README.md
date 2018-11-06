@@ -1,6 +1,6 @@
-# Italocoin Blockchain Utilities
+# Italo Blockchain Utilities
 
-Copyright (c) 2014-2018, The Monero And Italocoin Project
+Copyright (c) 2014-2018, The Monero And Italo Project
 
 ## Introduction
 
@@ -12,16 +12,16 @@ See also each utility's "--help" option.
 
 ### Export an existing blockchain database
 
-`$ italocoin-blockchain-export`
+`$ italo-blockchain-export`
 
 This loads the existing blockchain and exports it to `$MONERO_DATA_DIR/export/blockchain.raw`
 
 ### Import the exported file
 
-`$ italocoin-blockchain-import`
+`$ italo-blockchain-import`
 
 This imports blocks from `$MONERO_DATA_DIR/export/blockchain.raw` (exported using the
-`italocoin-blockchain-export` tool as described above) into the current database.
+`italo-blockchain-export` tool as described above) into the current database.
 
 Defaults: `--batch on`, `--batch size 20000`, `--verify on`
 
@@ -30,14 +30,14 @@ Batch size refers to number of blocks and can be adjusted for performance based 
 Verification should only be turned off if importing from a trusted blockchain.
 
 If you encounter an error like "resizing not supported in batch mode", you can just re-run
-the `italocoin-blockchain-import` command again, and it will restart from where it left off.
+the `italo-blockchain-import` command again, and it will restart from where it left off.
 
 ```bash
 ## use default settings to import blockchain.raw into database
-$ italocoin-blockchain-import
+$ italo-blockchain-import
 
 ## fast import with large batch size, database mode "fastest", verification off
-$ italocoin-blockchain-import --batch-size 20000 --database lmdb#fastest --verify off
+$ italo-blockchain-import --batch-size 20000 --database lmdb#fastest --verify off
 
 ```
 
@@ -80,9 +80,9 @@ LMDB flags (more than one may be specified):
 ## Examples:
 
 ```
-$ italocoin-blockchain-import --database lmdb#fastest
+$ italo-blockchain-import --database lmdb#fastest
 
-$ italocoin-blockchain-import --database lmdb#nosync
+$ italo-blockchain-import --database lmdb#nosync
 
-$ italocoin-blockchain-import --database lmdb#nosync,nometasync
+$ italo-blockchain-import --database lmdb#nosync,nometasync
 ```

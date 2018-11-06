@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -31,7 +31,7 @@
 #include "wallet/api/wallet2_api.h"
 #include <boost/thread/shared_mutex.hpp>
 
-namespace Italocoin {
+namespace Italo {
 
 class WalletImpl;
 
@@ -56,5 +56,5 @@ private:
 
 }
 
-namespace Bititalocoin = Italocoin;
+namespace Bititalo = Italo;
 

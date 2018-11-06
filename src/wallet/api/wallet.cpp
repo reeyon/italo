@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -56,7 +56,7 @@ using namespace cryptonote;
 #undef MONERO_DEFAULT_LOG_CATEGORY
 #define MONERO_DEFAULT_LOG_CATEGORY "WalletAPI"
 
-namespace Italocoin {
+namespace Italo {
 
 namespace {
     // copy-pasted from simplewallet
@@ -72,7 +72,7 @@ namespace {
     std::string get_default_ringdb_path(cryptonote::network_type nettype)
     {
       boost::filesystem::path dir = tools::get_default_data_dir();
-      // remove .bititalocoin, replace with .shared-ringdb
+      // remove .bititalo, replace with .shared-ringdb
       dir = dir.remove_filename();
       dir /= ".shared-ringdb";
       if (nettype == cryptonote::TESTNET)
@@ -2320,4 +2320,4 @@ bool WalletImpl::isKeysFileLocked()
 }
 } // namespace
 
-namespace Bititalocoin = Italocoin;
+namespace Bititalo = Italo;

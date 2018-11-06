@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018, The Monero And Italocoin Project
+// Copyright (c) 2017-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -110,12 +110,12 @@ int main(int argc, char* argv[])
   SL(tools::wallet2::unsigned_tx_set);
   SL(tools::wallet2::signed_tx_set);
 
-  SL(Italocoin::WalletImpl);
-  SL(Italocoin::AddressBookRow);
-  SL(Italocoin::TransactionInfoImpl);
-  SL(Italocoin::TransactionHistoryImpl);
-  SL(Italocoin::PendingTransactionImpl);
-  SL(Italocoin::UnsignedTransactionImpl);
+  SL(Italo::WalletImpl);
+  SL(Italo::AddressBookRow);
+  SL(Italo::TransactionInfoImpl);
+  SL(Italo::TransactionHistoryImpl);
+  SL(Italo::PendingTransactionImpl);
+  SL(Italo::UnsignedTransactionImpl);
 
   return 0;
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -42,7 +42,7 @@
 
 using namespace epee;
 
-namespace Italocoin {
+namespace Italo {
 
 TransactionHistory::~TransactionHistory() {}
 
@@ -115,7 +115,7 @@ void TransactionHistoryImpl::refresh()
     // - payment_details              - input transfers
 
     // payments are "input transactions";
-    // one input transaction contains only one transfer. e.g. <transaction_id> - <100ITA>
+    // one input transaction contains only one transfer. e.g. <transaction_id> - <100XTA>
 
     std::list<std::pair<crypto::hash, tools::wallet2::payment_details>> in_payments;
     m_wallet->m_wallet->get_payments(in_payments, min_height, max_height);
@@ -143,8 +143,8 @@ void TransactionHistoryImpl::refresh()
     // confirmed output transactions
     // one output transaction may contain more than one money transfer, e.g.
     // <transaction_id>:
-    //    transfer1: 100ITA to <address_1>
-    //    transfer2: 50ITA  to <address_2>
+    //    transfer1: 100XTA to <address_1>
+    //    transfer2: 50XTA  to <address_2>
     //    fee: fee charged per transaction
     //
 
@@ -245,4 +245,4 @@ void TransactionHistoryImpl::refresh()
 
 } // namespace
 
-namespace Bititalocoin = Italocoin;
+namespace Bititalo = Italo;

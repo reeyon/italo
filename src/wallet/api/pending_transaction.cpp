@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -43,7 +43,7 @@
 
 using namespace std;
 
-namespace Italocoin {
+namespace Italo {
 
 PendingTransaction::~PendingTransaction() {}
 
@@ -247,5 +247,5 @@ std::vector<std::string> PendingTransactionImpl::signersKeys() const {
 
 }
 
-namespace Bititalocoin = Italocoin;
+namespace Bititalo = Italo;
 

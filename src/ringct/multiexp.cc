@@ -1,4 +1,4 @@
-// Copyright (c) 2017, The Italocoin Project
+// Copyright (c) 2017, The Monero And Italo Project
 // 
 // All rights reserved.
 // 

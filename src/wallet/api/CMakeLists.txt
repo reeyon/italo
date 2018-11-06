@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018, The Monero And Italocoin Project
+# Copyright (c) 2014-2018, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -57,9 +57,9 @@ set(wallet_api_private_headers
   subaddress_account.h
   unsigned_transaction.h)
 
-italocoin_private_headers(wallet_api
+italo_private_headers(wallet_api
   ${wallet_api_private_headers})
-italocoin_add_library(wallet_api
+italo_add_library(wallet_api
   ${wallet_api_sources}
   ${wallet_api_headers}
   ${wallet_api_private_headers})

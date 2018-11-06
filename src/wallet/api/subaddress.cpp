@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018, The Monero And Italocoin Project
+// Copyright (c) 2017-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -34,7 +34,7 @@
 
 #include <vector>
 
-namespace Italocoin {
+namespace Italo {
   
 Subaddress::~Subaddress() {}
   

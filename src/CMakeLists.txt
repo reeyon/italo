@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018, The Monero And Italocoin Project
+# Copyright (c) 2014-2018, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -39,13 +39,13 @@ if (NOT (MINGW OR APPLE OR FREEBSD OR OPENBSD OR DRAGONFLY))
   add_compile_options("${WARNINGS_AS_ERRORS_FLAG}") # applies only to targets that follow
 endif()
 
-function (italocoin_private_headers group)
+function (italo_private_headers group)
   source_group("${group}\\Private"
     FILES
       ${ARGN})
 endfunction ()
 
-function (italocoin_install_headers subdir)
+function (italo_install_headers subdir)
   install(
     FILES       ${ARGN}
     DESTINATION "include/${subdir}"
@@ -63,7 +63,7 @@ function (enable_stack_trace target)
   endif()
 endfunction()
 
-function (italocoin_add_executable name)
+function (italo_add_executable name)
   source_group("${name}"
     FILES
       ${ARGN})
@@ -82,11 +82,11 @@ function (italocoin_add_executable name)
   enable_stack_trace("${name}")
 endfunction ()
 
-function (italocoin_add_library name)
-    italocoin_add_library_with_deps(NAME "${name}" SOURCES ${ARGN})
+function (italo_add_library name)
+    italo_add_library_with_deps(NAME "${name}" SOURCES ${ARGN})
 endfunction()
 
-function (italocoin_add_library_with_deps)
+function (italo_add_library_with_deps)
   cmake_parse_arguments(MONERO_ADD_LIBRARY "" "NAME" "DEPENDS;SOURCES" ${ARGN})
   source_group("${MONERO_ADD_LIBRARY_NAME}" FILES ${MONERO_ADD_LIBRARY_SOURCES})
 
@@ -106,7 +106,7 @@ function (italocoin_add_library_with_deps)
 endfunction ()
 
 include(Version)
-italocoin_add_library(version SOURCES ${CMAKE_BINARY_DIR}/version.cpp DEPENDS genversion)
+italo_add_library(version SOURCES ${CMAKE_BINARY_DIR}/version.cpp DEPENDS genversion)
 
 add_subdirectory(common)
 add_subdirectory(crypto)

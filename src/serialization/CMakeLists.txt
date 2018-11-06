@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2018, The Monero And Italocoin Project
+# Copyright (c) 2016-2018, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -34,9 +34,9 @@ set(serialization_headers)
 set(serialization_private_headers
   json_object.h)
 
-italocoin_private_headers(serialization
+italo_private_headers(serialization
   ${serialization_private_headers})
-italocoin_add_library(serialization
+italo_add_library(serialization
   ${serialization_sources}
   ${serialization_headers}
   ${serialization_private_headers})

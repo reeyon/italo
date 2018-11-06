@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -40,7 +40,7 @@
 #include <boost/thread/condition_variable.hpp>
 
 
-namespace Italocoin {
+namespace Italo {
 class TransactionHistoryImpl;
 class PendingTransactionImpl;
 class UnsignedTransactionImpl;
@@ -257,7 +257,7 @@ private:
 
 } // namespace
 
-namespace Bititalocoin = Italocoin;
+namespace Bititalo = Italo;
 
 #endif
 

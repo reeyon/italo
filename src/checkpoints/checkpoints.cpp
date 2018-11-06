@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 //
 // All rights reserved.
 //
@@ -232,7 +232,7 @@ namespace cryptonote
   {
     std::vector<std::string> records;
 
-    // All four ItalocoinPulse domains have DNSSEC on and valid
+    // All four ItaloPulse domains have DNSSEC on and valid
     static const std::vector<std::string> dns_urls = { 
 	
     };

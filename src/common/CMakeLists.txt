@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018, The Monero And Italocoin Project
+# Copyright (c) 2014-2018, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -79,9 +79,9 @@ set(common_private_headers
   updates.h
   aligned.h)
 
-italocoin_private_headers(common
+italo_private_headers(common
   ${common_private_headers})
-italocoin_add_library(common
+italo_add_library(common
   ${common_sources}
   ${common_headers}
   ${common_private_headers}
@@ -101,5 +101,5 @@ target_link_libraries(common
     ${OPENSSL_LIBRARIES}
     ${EXTRA_LIBRARIES})
 
-#italocoin_install_headers(common
+#italo_install_headers(common
 #  ${common_headers})

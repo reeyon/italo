@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018, The Monero And Italocoin Project
+# Copyright (c) 2014-2018, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -53,9 +53,9 @@ if (BERKELEY_DB)
   )
 endif()
 
-italocoin_private_headers(blockchain_db
+italo_private_headers(blockchain_db
   ${crypto_private_headers})
-italocoin_add_library(blockchain_db
+italo_add_library(blockchain_db
   ${blockchain_db_sources}
   ${blockchain_db_headers}
   ${blockchain_db_private_headers})

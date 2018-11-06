@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018, The Monero And Italocoin Project
+# Copyright (c) 2014-2018, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -49,9 +49,9 @@ set(mnemonics_private_headers
   esperanto.h
   lojban.h)
 
-italocoin_private_headers(mnemonics
+italo_private_headers(mnemonics
   ${mnemonics_private_headers})
-italocoin_add_library(mnemonics
+italo_add_library(mnemonics
   ${mnemonics_sources}
   ${mnemonics_headers}
   ${mnemonics_private_headers})

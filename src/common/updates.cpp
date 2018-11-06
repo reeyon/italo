@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018, The Monero And Italocoin Project
+// Copyright (c) 2017-2018, The Monero And Italo Project
 // 
 // All rights reserved.
 // 
@@ -44,12 +44,12 @@ namespace tools
 
     MDEBUG("Checking updates for " << buildtag << " " << software);
 
-    // All four ItalocoinPulse domains have DNSSEC on and valid
+    // All four ItaloPulse domains have DNSSEC on and valid
     static const std::vector<std::string> dns_urls = {
-        "updates.italocoinpulse.org",
-        "updates.italocoinpulse.net",
-        "updates.italocoinpulse.co",
-        "updates.italocoinpulse.se"
+        "updates.italopulse.org",
+        "updates.italopulse.net",
+        "updates.italopulse.co",
+        "updates.italopulse.se"
     };
 
     if (!tools::dns_utils::load_txt_records_from_dns(records, dns_urls))
@@ -99,7 +99,7 @@ namespace tools
 
   std::string get_update_url(const std::string &software, const std::string &subdir, const std::string &buildtag, const std::string &version, bool user)
   {
-    const char *base = user ? "https://downloads.getitalocoin.org/" : "https://updates.getitalocoin.org/";
+    const char *base = user ? "https://downloads.getitalo.org/" : "https://updates.getitalo.org/";
 #ifdef _WIN32
     static const char *extension = strncmp(buildtag.c_str(), "install-", 8) ? ".zip" : ".exe";
 #else

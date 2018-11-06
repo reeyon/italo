@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 // 
 // All rights reserved.
 // 
@@ -249,7 +249,7 @@ namespace boost
   {
     a & x.mask;
     a & x.amount;
-    // a & x.senderPk; // not serialized, as we do not use it in italocoin currently
+    // a & x.senderPk; // not serialized, as we do not use it in italo currently
   }
 
   template <class Archive>

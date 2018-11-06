@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2018, The Monero And Italocoin Project
+# Copyright (c) 2014-2018, The Monero And Italo Project
 #
 # All rights reserved.
 #
@@ -58,9 +58,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   add_definitions(-DDEBUG_TMPDIR_LOG=1)
 endif()
 
-italocoin_private_headers(daemonizer
+italo_private_headers(daemonizer
   ${daemonizer_private_headers})
-italocoin_add_library(daemonizer
+italo_add_library(daemonizer
   ${daemonizer_sources}
   ${daemonizer_headers}
   ${daemonizer_private_headers})

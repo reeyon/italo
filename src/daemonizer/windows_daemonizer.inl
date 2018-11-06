@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italocoin Project
+// Copyright (c) 2014-2018, The Monero And Italo Project
 // 
 // All rights reserved.
 // 
@@ -176,7 +176,7 @@ namespace daemonizer
     }
     else // interactive
     {
-      //LOG_PRINT_L0("Italocoin '" << MONERO_RELEASE_NAME << "' (v" << MONERO_VERSION_FULL);
+      //LOG_PRINT_L0("Italo '" << MONERO_RELEASE_NAME << "' (v" << MONERO_VERSION_FULL);
       return executor.run_interactive(vm);
     }
 
