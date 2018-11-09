@@ -5208,6 +5208,28 @@ bool simple_wallet::transfer_main(int transfer_type, const std::vector<std::stri
         fail_msg_writer() << tr("unknown error");
       }
     }
+    else if (m_wallet->get_account().get_device().has_tx_cold_sign())
+    {
+      try
+      {
+        tools::wallet2::signed_tx_set signed_tx;
+        if (!cold_sign_tx(ptx_vector, signed_tx, dsts_info, [&](const tools::wallet2::signed_tx_set &tx){ return accept_loaded_tx(tx); })){
+          fail_msg_writer() << tr("Failed to cold sign transaction with HW wallet");
+          return true;
+        }
+
+        commit_or_save(signed_tx.ptx, m_do_not_relay);
+      }
+      catch (const std::exception& e)
+      {
+        handle_transfer_exception(std::current_exception(), m_wallet->is_trusted_daemon());
+      }
+      catch (...)
+      {
+        LOG_ERROR("Unknown error");
+        fail_msg_writer() << tr("unknown error");
+      }
+    }
     else if (m_wallet->watch_only())
     {
       bool r = m_wallet->save_tx(ptx_vector, "unsigned_italo_tx");
@@ -5628,6 +5650,31 @@ bool simple_wallet::sweep_main(uint64_t below, bool locked, const std::vector<st
       else
       {
         success_msg_writer(true) << tr("Unsigned transaction(s) successfully written to file: ") << "multisig_italo_tx";
+      }
+    }
+    else if (m_wallet->get_account().get_device().has_tx_cold_sign())
+    {
+      try
+      {
+        tools::wallet2::signed_tx_set signed_tx;
+        std::vector<cryptonote::address_parse_info> dsts_info;
+        dsts_info.push_back(info);
+
+        if (!cold_sign_tx(ptx_vector, signed_tx, dsts_info, [&](const tools::wallet2::signed_tx_set &tx){ return accept_loaded_tx(tx); })){
+          fail_msg_writer() << tr("Failed to cold sign transaction with HW wallet");
+          return true;
+        }
+
+        commit_or_save(signed_tx.ptx, m_do_not_relay);
+      }
+      catch (const std::exception& e)
+      {
+        handle_transfer_exception(std::current_exception(), m_wallet->is_trusted_daemon());
+      }
+      catch (...)
+      {
+        LOG_ERROR("Unknown error");
+        fail_msg_writer() << tr("unknown error");
       }
     }
     else if (m_wallet->get_account().get_device().has_tx_cold_sign())
