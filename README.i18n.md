@@ -3,7 +3,7 @@ Italo daemon internationalization
 
 The Italo command line tools can be translated in various languages. If you wish to contribute and need help/support, contact the [Italo Localization Workgroup on Taiga](https://taiga.getitalo.org/project/erciccione-italo-localization/) or come chat on `#italo-translations` (Freenode/IRC, riot/matrix, MatterMost)
 
-In order to use the same translation workflow as the [Italo Core GUI](https://github.com/italocoin-project/italo-core), they use Qt Linguist translation files.  However, to avoid the dependencies on Qt this normally implies, they use a custom loader to read those files at runtime.
+In order to use the same translation workflow as the [italo Core GUI](https://github.com/italocoin-project/italo-gui), they use Qt Linguist translation files.  However, to avoid the dependencies on Qt this normally implies, they use a custom loader to read those files at runtime.
 
 ### Tools for translators
 
