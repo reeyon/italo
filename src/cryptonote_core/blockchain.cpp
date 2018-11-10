@@ -115,7 +115,7 @@ static const struct {
   { 7, 10, 0, 1522235573, 100 },
   { 8, 15, 0, 1523198945, 100 },
   { 9, 30, 0, 1523198950, 100 },
-  { 10, 35, 0, 1523199950, 100 },
+  { 10, 34, 0, 1523199950, 100 },
   { 11, 100, 0, 1541063718, 100 },
 };
 static const uint64_t testnet_hard_fork_version_1_till = 4;
@@ -2359,13 +2359,13 @@ bool Blockchain::check_tx_outputs(const transaction& tx, tx_verification_context
     }
   }
 
-  // from v9, forbid borromean range proofs and Multi
+  // from v10, forbid borromean range proofs
   if (hf_version > 10) {
     if (tx.version >= 2) {
       const bool borromean = rct::is_rct_borromean(tx.rct_signatures.type);
-      if (borromean || tx.rct_signatures.type != rct::RCTTypeBulletproof)
+      if (borromean)
       {
-        MERROR_VER("Borromean range proofs and Multi are not allowed after v11 ");
+        MERROR_VER("Borromean range proofs are not allowed after v11 ");
         tvc.m_invalid_output = true;
         return false;
       }
