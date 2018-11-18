@@ -34,7 +34,7 @@
 #include <cstdint>
 #include <vector>
 #include <boost/math/special_functions/round.hpp>
-#include "common/int-util.h"
+#include "int-util.h"
 #include "crypto/hash.h"
 #include "cryptonote_config.h"
 #include "difficulty.h"
