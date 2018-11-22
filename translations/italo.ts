@@ -4671,7 +4671,7 @@ WARNING: Do not reuse your Italo keys on another fork, UNLESS this fork has key 
     </message>
     <message>
         <location filename="../src/wallet/wallet2.cpp" line="148"/>
-        <source>Use daemon instance at port &lt;arg&gt; instead of 18081</source>
+        <source>Use daemon instance at port &lt;arg&gt; instead of 13102</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
