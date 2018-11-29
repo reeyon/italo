@@ -93,6 +93,7 @@ Dates are provided in the format YYYY-MM-DD.
 | 5700                           | 2018-04-08 | v8                | v12.0.0                | v12.0.0                    | ringsize >= 7, sorted inputs, bulletproofs |
 | 20000                          | 2018-05-17 | v9                | v12.1.0                | v12.1.0                    | Bugs fixed, Heavy Pow |
 | 55000                          | 2018-07-03 | v10               | v12.2.0                | v12.2.0                    | Custom Heavy Pow, Bugs fixed, bulletproofs "exploit???" fixed  |
+| 165000                         | 2018-12-05 | v11               | v13.0.0                | v13.0.4                    | Bug Fixes, Bulletproofs PAD, Fee per byte...  |
 
 X's indicate that these details have not been determined as of commit date.
 
