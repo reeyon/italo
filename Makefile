@@ -96,7 +96,7 @@ release-all:
 
 release-static:
 	mkdir -p $(builddir)/release
-	cd $(builddir)/release && cmake -D STATIC=ON -D ARCH="x86-64" -D BUILD_64=ON -D CMAKE_BUILD_TYPE=release $(topdir) && $(MAKE)
+	cd $(builddir)/release && cmake -D STATIC=ON -D ARCH="x86-64" -D BUILD_64=ON -D USE_READLINE=OFF -D CMAKE_BUILD_TYPE=release $(topdir) && $(MAKE)
 
 coverage:
 	mkdir -p $(builddir)/debug
