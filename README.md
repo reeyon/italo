@@ -63,7 +63,7 @@ The Italo donation address is: `ipPQjQYEQsLL7Gv43PpHDLiFLsZzoGuZtEJ8ZCW2is5TGeMN
 
 The Bitcoin donation address is: `1FgYSKX6hqoxpCba91bigBr7xy9A3e5H1C`
 
-The Italo: `44gNsFFqMf59DiVL3ejpfAdV3H3aFbbYM28XtvBK22SQVESBLpxRrQcFCky2yVH8Wa3FpiBbiNRJ5SQfdsVwJqYpA7XLyec`
+The Monero donation address is: `44gNsFFqMf59DiVL3ejpfAdV3H3aFbbYM28XtvBK22SQVESBLpxRrQcFCky2yVH8Wa3FpiBbiNRJ5SQfdsVwJqYpA7XLyec`
 
 Core development funding and/or some supporting services are also graciously provided by sponsors:
 
