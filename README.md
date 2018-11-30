@@ -5,9 +5,9 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 ## Development resources
 
-- Web: [italo.com](https://italo.com)
-- Forum: [forum.italo.com](https://forum.italo.com)
-- Mail: [dev@italo.com](mailto:dev@italo.com)
+- Web: [italo.network](https://italo.network)
+- Forum: [forum.italo.network](https://forum.italo.network)
+- Mail: [dev@italo.network](mailto:dev@italo.network)
 - GitHub: [https://github.com/italocoin-project/italo](https://github.com/italocoin-project/italo)
 - IRC: [#italo-dev on Freenode](http://webchat.freenode.net/?randomnick=1&channels=%23italo-dev&prompt=1&uio=d4)
 
@@ -58,7 +58,7 @@ As with many development projects, the repository on Github is considered to be 
 
 ## Supporting the project
 
-Italo is a 100% community-sponsored endeavor. If you want to join our efforts, the easiest thing you can do is support the project financially. Both Italo and Bitcoin donations can be made to **donate.italo.com** if using a client that supports the [OpenAlias](https://openalias.org) standard. Alternatively you can send XMR to the Italo donation address via the `donate` command (type `help` in the command-line wallet for details).
+Italo is a 100% community-sponsored endeavor. If you want to join our efforts, the easiest thing you can do is support the project financially. Both Italo and Bitcoin donations can be made to **donate.italo.network** if using a client that supports the [OpenAlias](https://openalias.org) standard. Alternatively you can send XMR to the Italo donation address via the `donate` command (type `help` in the command-line wallet for details).
 
 The Italo donation address is: `ipPQjQYEQsLL7Gv43PpHDLiFLsZzoGuZtEJ8ZCW2is5TGeMNPo66bTKXAAd3m3ceXp4aweqmZnAHt9bWHALkK7xR2MVhF8QFZ` (viewkey: `f359631075708155cc3d92a32b75a7d02a5dcf27756707b47a2b31b21c389501`)
 
