@@ -18,12 +18,11 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 ## Research
 
-The [Monero Research Lab](https://src.getitalo.org/resources/research-lab/) is an open forum where the community coordinates research into Monero cryptography, protocols, fungibility, analysis, and more. We welcome collaboration and contributions from outside researchers! Because not all Lab work and publications are distributed as traditional preprints or articles, they may be easy to miss if you are conducting literature reviews for your own Monero research. You are encouraged to get in touch with our researchers if you have questions, wish to collaborate, or would like guidance to help avoid unnecessarily duplicating earlier or known work.
+The [Monero Research Lab](https://src.italo.network/resources/research-lab/) is an open forum where the community coordinates research into Monero cryptography, protocols, fungibility, analysis, and more. We welcome collaboration and contributions from outside researchers! Because not all Lab work and publications are distributed as traditional preprints or articles, they may be easy to miss if you are conducting literature reviews for your own Monero research. You are encouraged to get in touch with our researchers if you have questions, wish to collaborate, or would like guidance to help avoid unnecessarily duplicating earlier or known work.
 
-Our researchers are available on IRC in [#italo-research-lab on Freenode](https://webchat.freenode.net/?randomnick=1&channels=%23italo-research-lab&prompt=1&uio=d4) or by email:
+Our researchers are available on IRC in [#italo Dev on Freenode](https://webchat.freenode.net/?randomnick=1&channels=%23italo-dev&prompt=1&uio=d4) or by email:
 
-- Sarang Noether, Ph.D.: [sarang@getitalo.org](mailto:sarang@getitalo.org) or [sarang.noether@protonmail.com](mailto:sarang.noether@protonmail.com); [research repository](https://github.com/SarangNoether/research-lab)
-- Surae Noether (Brandon Goodell), Ph.D.: [surae@getitalo.org](mailto:surae@getitalo.org) or [surae.noether@protonmail.com](mailto:surae.noether@protonmail.com); [research repository](https://github.com/b-g-goodell/research-lab)
+- ITALO, Ph.D.: [dev@italo.network](mailto:dev@italo.network) 
 
 ## Announcements
 
