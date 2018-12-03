@@ -1450,7 +1450,7 @@ namespace tools
   };
 }
 BOOST_CLASS_VERSION(tools::wallet2, 27)
-BOOST_CLASS_VERSION(tools::wallet2::transfer_details, 10)
+BOOST_CLASS_VERSION(tools::wallet2::transfer_details, 11)
 BOOST_CLASS_VERSION(tools::wallet2::multisig_info, 1)
 BOOST_CLASS_VERSION(tools::wallet2::multisig_info::LR, 0)
 BOOST_CLASS_VERSION(tools::wallet2::multisig_tx_set, 1)
