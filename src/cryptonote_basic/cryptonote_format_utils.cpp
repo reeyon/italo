@@ -905,7 +905,7 @@ namespace cryptonote
   {
     if (decimal_point == (unsigned int)-1)
       decimal_point = default_decimal_point;
-    switch (std::atomic_load(&default_decimal_point))
+    switch (decimal_point)
     {
       case 12:
         return "italo";
@@ -918,7 +918,7 @@ namespace cryptonote
       case 0:
         return "picotalo";
       default:
-        ASSERT_MES_AND_THROW("Invalid decimal point specification: " << default_decimal_point);
+        ASSERT_MES_AND_THROW("Invalid decimal point specification: " << decimal_point);
     }
   }
   //---------------------------------------------------------------
