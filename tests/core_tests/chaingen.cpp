@@ -538,6 +538,7 @@ bool construct_miner_tx_manually(size_t height, uint64_t already_generated_coins
     LOG_PRINT_L0("Block is too big");
     return false;
   }
+  
   block_reward += fee;
 
   crypto::key_derivation derivation;
