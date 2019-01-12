@@ -66,7 +66,7 @@ namespace trezor
     // Each package instantiation so lookup works
     hw::trezor::messages::common::Success::default_instance();
     hw::trezor::messages::management::Cancel::default_instance();
-    hw::trezor::messages::italo::MoneroGetAddress::default_instance();
+    hw::trezor::messages::italo::ItaloGetAddress::default_instance();
 
     google::protobuf::Descriptor const * desc = nullptr;
     for(const string &text : PACKAGES){
@@ -90,13 +90,13 @@ namespace trezor
 //    // CODEGEN way, fast
 //    switch(wire_number){
 //      case 501:
-//        return new messages::italo::MoneroTransactionSignRequest();
+//        return new messages::italo::ItaloTransactionSignRequest();
 //      default:
 //        throw std::runtime_error("not implemented");
 //    }
 //
 //    // CODEGEN message -> number: specification
-//    //    messages::MessageType get_message_wire_number(const messages::italo::MoneroTransactionSignRequest * msg) { return 501; }
+//    //    messages::MessageType get_message_wire_number(const messages::italo::ItaloTransactionSignRequest * msg) { return 501; }
 //    //    messages::MessageType get_message_wire_number(const messages::management::ping * msg)
 //
   }

@@ -105,52 +105,52 @@ namespace chacha {
 // Cold Key image sync
 namespace ki {
 
-  using MoneroTransferDetails = messages::italo::MoneroKeyImageSyncStepRequest_MoneroTransferDetails;
-  using MoneroSubAddressIndicesList = messages::italo::MoneroKeyImageExportInitRequest_MoneroSubAddressIndicesList;
-  using MoneroExportedKeyImage = messages::italo::MoneroKeyImageSyncStepAck_MoneroExportedKeyImage;
+  using ItaloTransferDetails = messages::italo::ItaloKeyImageSyncStepRequest_ItaloTransferDetails;
+  using ItaloSubAddressIndicesList = messages::italo::ItaloKeyImageExportInitRequest_ItaloSubAddressIndicesList;
+  using ItaloExportedKeyImage = messages::italo::ItaloKeyImageSyncStepAck_ItaloExportedKeyImage;
   using exported_key_image = hw::device_cold::exported_key_image;
 
   /**
-   * Converts transfer details to the MoneroTransferDetails required for KI sync
+   * Converts transfer details to the ItaloTransferDetails required for KI sync
    */
   bool key_image_data(wallet_shim * wallet,
                       const std::vector<tools::wallet2::transfer_details> & transfers,
-                      std::vector<MoneroTransferDetails> & res);
+                      std::vector<ItaloTransferDetails> & res);
 
   /**
-   * Computes a hash over MoneroTransferDetails. Commitment used in the KI sync.
+   * Computes a hash over ItaloTransferDetails. Commitment used in the KI sync.
    */
-  std::string compute_hash(const MoneroTransferDetails & rr);
+  std::string compute_hash(const ItaloTransferDetails & rr);
 
   /**
    * Generates KI sync request with commitments computed.
    */
-  void generate_commitment(std::vector<MoneroTransferDetails> & mtds,
+  void generate_commitment(std::vector<ItaloTransferDetails> & mtds,
                            const std::vector<tools::wallet2::transfer_details> & transfers,
-                           std::shared_ptr<messages::italo::MoneroKeyImageExportInitRequest> & req);
+                           std::shared_ptr<messages::italo::ItaloKeyImageExportInitRequest> & req);
 
 }
 
 // Cold transaction signing
 namespace tx {
-  using TsxData = messages::italo::MoneroTransactionInitRequest_MoneroTransactionData;
-  using MoneroTransactionDestinationEntry = messages::italo::MoneroTransactionDestinationEntry;
-  using MoneroAccountPublicAddress = messages::italo::MoneroTransactionDestinationEntry_MoneroAccountPublicAddress;
-  using MoneroTransactionSourceEntry = messages::italo::MoneroTransactionSourceEntry;
-  using MoneroMultisigKLRki = messages::italo::MoneroTransactionSourceEntry_MoneroMultisigKLRki;
-  using MoneroOutputEntry = messages::italo::MoneroTransactionSourceEntry_MoneroOutputEntry;
-  using MoneroRctKey = messages::italo::MoneroTransactionSourceEntry_MoneroOutputEntry_MoneroRctKeyPublic;
-  using MoneroRsigData = messages::italo::MoneroTransactionRsigData;
+  using TsxData = messages::italo::ItaloTransactionInitRequest_ItaloTransactionData;
+  using ItaloTransactionDestinationEntry = messages::italo::ItaloTransactionDestinationEntry;
+  using ItaloAccountPublicAddress = messages::italo::ItaloTransactionDestinationEntry_ItaloAccountPublicAddress;
+  using ItaloTransactionSourceEntry = messages::italo::ItaloTransactionSourceEntry;
+  using ItaloMultisigKLRki = messages::italo::ItaloTransactionSourceEntry_ItaloMultisigKLRki;
+  using ItaloOutputEntry = messages::italo::ItaloTransactionSourceEntry_ItaloOutputEntry;
+  using ItaloRctKey = messages::italo::ItaloTransactionSourceEntry_ItaloOutputEntry_ItaloRctKeyPublic;
+  using ItaloRsigData = messages::italo::ItaloTransactionRsigData;
 
   using tx_construction_data = tools::wallet2::tx_construction_data;
   using unsigned_tx_set = tools::wallet2::unsigned_tx_set;
 
-  void translate_address(MoneroAccountPublicAddress * dst, const cryptonote::account_public_address * src);
-  void translate_dst_entry(MoneroTransactionDestinationEntry * dst, const cryptonote::tx_destination_entry * src);
-  void translate_src_entry(MoneroTransactionSourceEntry * dst, const cryptonote::tx_source_entry * src);
-  void translate_klrki(MoneroMultisigKLRki * dst, const rct::multisig_kLRki * src);
-  void translate_rct_key(MoneroRctKey * dst, const rct::ctkey * src);
-  std::string hash_addr(const MoneroAccountPublicAddress * addr, boost::optional<uint64_t> amount = boost::none, boost::optional<bool> is_subaddr = boost::none);
+  void translate_address(ItaloAccountPublicAddress * dst, const cryptonote::account_public_address * src);
+  void translate_dst_entry(ItaloTransactionDestinationEntry * dst, const cryptonote::tx_destination_entry * src);
+  void translate_src_entry(ItaloTransactionSourceEntry * dst, const cryptonote::tx_source_entry * src);
+  void translate_klrki(ItaloMultisigKLRki * dst, const rct::multisig_kLRki * src);
+  void translate_rct_key(ItaloRctKey * dst, const rct::ctkey * src);
+  std::string hash_addr(const ItaloAccountPublicAddress * addr, boost::optional<uint64_t> amount = boost::none, boost::optional<bool> is_subaddr = boost::none);
   std::string hash_addr(const std::string & spend_key, const std::string & view_key, boost::optional<uint64_t> amount = boost::none, boost::optional<bool> is_subaddr = boost::none);
   std::string hash_addr(const ::crypto::public_key * spend_key, const ::crypto::public_key * view_key, boost::optional<uint64_t> amount = boost::none, boost::optional<bool> is_subaddr = boost::none);
 
@@ -167,7 +167,7 @@ namespace tx {
     bool in_memory;
     unsigned rsig_type;
     std::vector<uint64_t> grouping_vct;
-    std::shared_ptr<MoneroRsigData> rsig_param;
+    std::shared_ptr<ItaloRsigData> rsig_param;
     size_t cur_input_idx;
     size_t cur_output_idx;
     size_t cur_batch_idx;
@@ -219,33 +219,33 @@ namespace tx {
   public:
     Signer(wallet_shim * wallet2, const unsigned_tx_set * unsigned_tx, size_t tx_idx = 0, hw::tx_aux_data * aux_data = nullptr);
 
-    std::shared_ptr<messages::italo::MoneroTransactionInitRequest> step_init();
-    void step_init_ack(std::shared_ptr<const messages::italo::MoneroTransactionInitAck> ack);
+    std::shared_ptr<messages::italo::ItaloTransactionInitRequest> step_init();
+    void step_init_ack(std::shared_ptr<const messages::italo::ItaloTransactionInitAck> ack);
 
-    std::shared_ptr<messages::italo::MoneroTransactionSetInputRequest> step_set_input(size_t idx);
-    void step_set_input_ack(std::shared_ptr<const messages::italo::MoneroTransactionSetInputAck> ack);
+    std::shared_ptr<messages::italo::ItaloTransactionSetInputRequest> step_set_input(size_t idx);
+    void step_set_input_ack(std::shared_ptr<const messages::italo::ItaloTransactionSetInputAck> ack);
 
     void sort_ki();
-    std::shared_ptr<messages::italo::MoneroTransactionInputsPermutationRequest> step_permutation();
-    void step_permutation_ack(std::shared_ptr<const messages::italo::MoneroTransactionInputsPermutationAck> ack);
+    std::shared_ptr<messages::italo::ItaloTransactionInputsPermutationRequest> step_permutation();
+    void step_permutation_ack(std::shared_ptr<const messages::italo::ItaloTransactionInputsPermutationAck> ack);
 
-    std::shared_ptr<messages::italo::MoneroTransactionInputViniRequest> step_set_vini_input(size_t idx);
-    void step_set_vini_input_ack(std::shared_ptr<const messages::italo::MoneroTransactionInputViniAck> ack);
+    std::shared_ptr<messages::italo::ItaloTransactionInputViniRequest> step_set_vini_input(size_t idx);
+    void step_set_vini_input_ack(std::shared_ptr<const messages::italo::ItaloTransactionInputViniAck> ack);
 
-    std::shared_ptr<messages::italo::MoneroTransactionAllInputsSetRequest> step_all_inputs_set();
-    void step_all_inputs_set_ack(std::shared_ptr<const messages::italo::MoneroTransactionAllInputsSetAck> ack);
+    std::shared_ptr<messages::italo::ItaloTransactionAllInputsSetRequest> step_all_inputs_set();
+    void step_all_inputs_set_ack(std::shared_ptr<const messages::italo::ItaloTransactionAllInputsSetAck> ack);
 
-    std::shared_ptr<messages::italo::MoneroTransactionSetOutputRequest> step_set_output(size_t idx);
-    void step_set_output_ack(std::shared_ptr<const messages::italo::MoneroTransactionSetOutputAck> ack);
+    std::shared_ptr<messages::italo::ItaloTransactionSetOutputRequest> step_set_output(size_t idx);
+    void step_set_output_ack(std::shared_ptr<const messages::italo::ItaloTransactionSetOutputAck> ack);
 
-    std::shared_ptr<messages::italo::MoneroTransactionAllOutSetRequest> step_all_outs_set();
-    void step_all_outs_set_ack(std::shared_ptr<const messages::italo::MoneroTransactionAllOutSetAck> ack, hw::device &hwdev);
+    std::shared_ptr<messages::italo::ItaloTransactionAllOutSetRequest> step_all_outs_set();
+    void step_all_outs_set_ack(std::shared_ptr<const messages::italo::ItaloTransactionAllOutSetAck> ack, hw::device &hwdev);
 
-    std::shared_ptr<messages::italo::MoneroTransactionSignInputRequest> step_sign_input(size_t idx);
-    void step_sign_input_ack(std::shared_ptr<const messages::italo::MoneroTransactionSignInputAck> ack);
+    std::shared_ptr<messages::italo::ItaloTransactionSignInputRequest> step_sign_input(size_t idx);
+    void step_sign_input_ack(std::shared_ptr<const messages::italo::ItaloTransactionSignInputAck> ack);
 
-    std::shared_ptr<messages::italo::MoneroTransactionFinalRequest> step_final();
-    void step_final_ack(std::shared_ptr<const messages::italo::MoneroTransactionFinalAck> ack);
+    std::shared_ptr<messages::italo::ItaloTransactionFinalRequest> step_final();
+    void step_final_ack(std::shared_ptr<const messages::italo::ItaloTransactionFinalAck> ack);
 
     std::string store_tx_aux_info();
 

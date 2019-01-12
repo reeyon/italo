@@ -116,7 +116,7 @@ namespace trezor {
     /*                              TREZOR PROTOCOL                            */
     /* ======================================================================= */
 
-    std::shared_ptr<messages::italo::MoneroAddress> device_trezor::get_address(
+    std::shared_ptr<messages::italo::ItaloAddress> device_trezor::get_address(
         const boost::optional<std::vector<uint32_t>> & path,
         const boost::optional<cryptonote::network_type> & network_type){
       AUTO_LOCK_CMD();
@@ -124,15 +124,15 @@ namespace trezor {
       device_state_reset_unsafe();
       require_initialized();
 
-      auto req = std::make_shared<messages::italo::MoneroGetAddress>();
-      this->set_msg_addr<messages::italo::MoneroGetAddress>(req.get(), path, network_type);
+      auto req = std::make_shared<messages::italo::ItaloGetAddress>();
+      this->set_msg_addr<messages::italo::ItaloGetAddress>(req.get(), path, network_type);
 
-      auto response = this->client_exchange<messages::italo::MoneroAddress>(req);
+      auto response = this->client_exchange<messages::italo::ItaloAddress>(req);
       MTRACE("Get address response received");
       return response;
     }
 
-    std::shared_ptr<messages::italo::MoneroWatchKey> device_trezor::get_view_key(
+    std::shared_ptr<messages::italo::ItaloWatchKey> device_trezor::get_view_key(
         const boost::optional<std::vector<uint32_t>> & path,
         const boost::optional<cryptonote::network_type> & network_type){
       AUTO_LOCK_CMD();
@@ -140,10 +140,10 @@ namespace trezor {
       device_state_reset_unsafe();
       require_initialized();
 
-      auto req = std::make_shared<messages::italo::MoneroGetWatchKey>();
-      this->set_msg_addr<messages::italo::MoneroGetWatchKey>(req.get(), path, network_type);
+      auto req = std::make_shared<messages::italo::ItaloGetWatchKey>();
+      this->set_msg_addr<messages::italo::ItaloGetWatchKey>(req.get(), path, network_type);
 
-      auto response = this->client_exchange<messages::italo::MoneroWatchKey>(req);
+      auto response = this->client_exchange<messages::italo::ItaloWatchKey>(req);
       MTRACE("Get watch key response received");
       return response;
     }
@@ -157,20 +157,20 @@ namespace trezor {
       device_state_reset_unsafe();
       require_initialized();
 
-      std::shared_ptr<messages::italo::MoneroKeyImageExportInitRequest> req;
+      std::shared_ptr<messages::italo::ItaloKeyImageExportInitRequest> req;
 
-      std::vector<protocol::ki::MoneroTransferDetails> mtds;
-      std::vector<protocol::ki::MoneroExportedKeyImage> kis;
+      std::vector<protocol::ki::ItaloTransferDetails> mtds;
+      std::vector<protocol::ki::ItaloExportedKeyImage> kis;
       protocol::ki::key_image_data(wallet, transfers, mtds);
       protocol::ki::generate_commitment(mtds, transfers, req);
 
-      this->set_msg_addr<messages::italo::MoneroKeyImageExportInitRequest>(req.get());
-      auto ack1 = this->client_exchange<messages::italo::MoneroKeyImageExportInitAck>(req);
+      this->set_msg_addr<messages::italo::ItaloKeyImageExportInitRequest>(req.get());
+      auto ack1 = this->client_exchange<messages::italo::ItaloKeyImageExportInitAck>(req);
 
       const auto batch_size = 10;
       const auto num_batches = (mtds.size() + batch_size - 1) / batch_size;
       for(uint64_t cur = 0; cur < num_batches; ++cur){
-        auto step_req = std::make_shared<messages::italo::MoneroKeyImageSyncStepRequest>();
+        auto step_req = std::make_shared<messages::italo::ItaloKeyImageSyncStepRequest>();
         auto idx_finish = std::min(static_cast<uint64_t>((cur + 1) * batch_size), static_cast<uint64_t>(mtds.size()));
         for(uint64_t idx = cur * batch_size; idx < idx_finish; ++idx){
           auto added_tdis = step_req->add_tdis();
@@ -178,7 +178,7 @@ namespace trezor {
           *added_tdis = mtds[idx];
         }
 
-        auto step_ack = this->client_exchange<messages::italo::MoneroKeyImageSyncStepAck>(step_req);
+        auto step_ack = this->client_exchange<messages::italo::ItaloKeyImageSyncStepAck>(step_req);
         auto kis_size = step_ack->kis_size();
         kis.reserve(static_cast<size_t>(kis_size));
         for(int i = 0; i < kis_size; ++i){
@@ -189,8 +189,8 @@ namespace trezor {
         MTRACE("Batch " << cur << " / " << num_batches << " batches processed");
       }
 
-      auto final_req = std::make_shared<messages::italo::MoneroKeyImageSyncFinalRequest>();
-      auto final_ack = this->client_exchange<messages::italo::MoneroKeyImageSyncFinalAck>(final_req);
+      auto final_req = std::make_shared<messages::italo::ItaloKeyImageSyncFinalRequest>();
+      auto final_ack = this->client_exchange<messages::italo::ItaloKeyImageSyncFinalAck>(final_req);
       ski.reserve(kis.size());
 
       for(auto & sub : kis){
@@ -299,20 +299,20 @@ namespace trezor {
       this->set_msg_addr(init_msg.get());
       transaction_pre_check(init_msg);
 
-      auto response = this->client_exchange<messages::italo::MoneroTransactionInitAck>(init_msg);
+      auto response = this->client_exchange<messages::italo::ItaloTransactionInitAck>(init_msg);
       signer->step_init_ack(response);
 
       // Step: Set transaction inputs
       for(size_t cur_src = 0; cur_src < num_sources; ++cur_src){
         auto src = signer->step_set_input(cur_src);
-        auto ack = this->client_exchange<messages::italo::MoneroTransactionSetInputAck>(src);
+        auto ack = this->client_exchange<messages::italo::ItaloTransactionSetInputAck>(src);
         signer->step_set_input_ack(ack);
       }
 
       // Step: sort
       auto perm_req = signer->step_permutation();
       if (perm_req){
-        auto perm_ack = this->client_exchange<messages::italo::MoneroTransactionInputsPermutationAck>(perm_req);
+        auto perm_ack = this->client_exchange<messages::italo::ItaloTransactionInputsPermutationAck>(perm_req);
         signer->step_permutation_ack(perm_ack);
       }
 
@@ -320,42 +320,42 @@ namespace trezor {
       if (!signer->in_memory()){
         for(size_t cur_src = 0; cur_src < num_sources; ++cur_src){
           auto src = signer->step_set_vini_input(cur_src);
-          auto ack = this->client_exchange<messages::italo::MoneroTransactionInputViniAck>(src);
+          auto ack = this->client_exchange<messages::italo::ItaloTransactionInputViniAck>(src);
           signer->step_set_vini_input_ack(ack);
         }
       }
 
       // Step: all inputs set
       auto all_inputs_set = signer->step_all_inputs_set();
-      auto ack_all_inputs = this->client_exchange<messages::italo::MoneroTransactionAllInputsSetAck>(all_inputs_set);
+      auto ack_all_inputs = this->client_exchange<messages::italo::ItaloTransactionAllInputsSetAck>(all_inputs_set);
       signer->step_all_inputs_set_ack(ack_all_inputs);
 
       // Step: outputs
       for(size_t cur_dst = 0; cur_dst < num_outputs; ++cur_dst){
         auto src = signer->step_set_output(cur_dst);
-        auto ack = this->client_exchange<messages::italo::MoneroTransactionSetOutputAck>(src);
+        auto ack = this->client_exchange<messages::italo::ItaloTransactionSetOutputAck>(src);
         signer->step_set_output_ack(ack);
       }
 
       // Step: all outs set
       auto all_out_set = signer->step_all_outs_set();
-      auto ack_all_out_set = this->client_exchange<messages::italo::MoneroTransactionAllOutSetAck>(all_out_set);
+      auto ack_all_out_set = this->client_exchange<messages::italo::ItaloTransactionAllOutSetAck>(all_out_set);
       signer->step_all_outs_set_ack(ack_all_out_set, *this);
 
       // Step: sign each input
       for(size_t cur_src = 0; cur_src < num_sources; ++cur_src){
         auto src = signer->step_sign_input(cur_src);
-        auto ack_sign = this->client_exchange<messages::italo::MoneroTransactionSignInputAck>(src);
+        auto ack_sign = this->client_exchange<messages::italo::ItaloTransactionSignInputAck>(src);
         signer->step_sign_input_ack(ack_sign);
       }
 
       // Step: final
       auto final_msg = signer->step_final();
-      auto ack_final = this->client_exchange<messages::italo::MoneroTransactionFinalAck>(final_msg);
+      auto ack_final = this->client_exchange<messages::italo::ItaloTransactionFinalAck>(final_msg);
       signer->step_final_ack(ack_final);
     }
 
-    void device_trezor::transaction_pre_check(std::shared_ptr<messages::monero::MoneroTransactionInitRequest> init_msg)
+    void device_trezor::transaction_pre_check(std::shared_ptr<messages::italo::ItaloTransactionInitRequest> init_msg)
     {
       CHECK_AND_ASSERT_THROW_MES(init_msg, "TransactionInitRequest is empty");
       CHECK_AND_ASSERT_THROW_MES(init_msg->has_tsx_data(), "TransactionInitRequest has no transaction data");

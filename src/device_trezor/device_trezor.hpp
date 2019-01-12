@@ -57,7 +57,7 @@ namespace trezor {
    */
   class device_trezor : public hw::trezor::device_trezor_base, public hw::device_cold {
     protected:
-      void transaction_pre_check(std::shared_ptr<messages::monero::MoneroTransactionInitRequest> init_msg);
+      void transaction_pre_check(std::shared_ptr<messages::italo::ItaloTransactionInitRequest> init_msg);
       void transaction_check(const protocol::tx::TData & tdata, const hw::tx_aux_data & aux_data);
 
     public:
@@ -88,14 +88,14 @@ namespace trezor {
       /**
        * Get address. Throws.
        */
-      std::shared_ptr<messages::italo::MoneroAddress> get_address(
+      std::shared_ptr<messages::italo::ItaloAddress> get_address(
           const boost::optional<std::vector<uint32_t>> & path = boost::none,
           const boost::optional<cryptonote::network_type> & network_type = boost::none);
 
       /**
        * Get watch key from device. Throws.
        */
-      std::shared_ptr<messages::italo::MoneroWatchKey> get_view_key(
+      std::shared_ptr<messages::italo::ItaloWatchKey> get_view_key(
           const boost::optional<std::vector<uint32_t>> & path = boost::none,
           const boost::optional<cryptonote::network_type> & network_type = boost::none);
 

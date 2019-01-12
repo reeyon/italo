@@ -87,7 +87,7 @@ set(blockchain_prune_known_spent_data_sources
 
 set(blockchain_prune_known_spent_data_private_headers)
 
-monero_private_headers(blockchain_prune_known_spent_data
+italo_private_headers(blockchain_prune_known_spent_data
 	  ${blockchain_prune_known_spent_data_private_headers})
 
 
@@ -277,7 +277,7 @@ set_property(TARGET blockchain_stats
 	OUTPUT_NAME "italo-blockchain-stats")
 install(TARGETS blockchain_stats DESTINATION bin)
 
-monero_add_executable(blockchain_prune_known_spent_data
+italo_add_executable(blockchain_prune_known_spent_data
   ${blockchain_prune_known_spent_data_sources}
   ${blockchain_prune_known_spent_data_private_headers})
 
@@ -296,5 +296,5 @@ target_link_libraries(blockchain_prune_known_spent_data
 
 set_property(TARGET blockchain_prune_known_spent_data
 	PROPERTY
-	OUTPUT_NAME "monero-blockchain-prune-known-spent-data")
+	OUTPUT_NAME "italo-blockchain-prune-known-spent-data")
 install(TARGETS blockchain_prune_known_spent_data DESTINATION bin)
