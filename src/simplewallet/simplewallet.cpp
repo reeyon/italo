@@ -2617,8 +2617,6 @@ simple_wallet::simple_wallet()
                            tr("Send a single output of the given key image to an address without change."));
   m_cmd_binder.set_handler("donate",
                            boost::bind(&simple_wallet::donate, this, _1),
-                           tr("donate [index=<N1>[,<N2>,...]] [<priority>] [<ring_size>] <amount> [<payment_id>]"),
-                           tr("Donate <amount> to the development team (italo.network/#donate)."));
                            tr(USAGE_DONATE),
                            tr("Donate <amount> to the development team (italo.network/#donate)."));
   m_cmd_binder.set_handler("sign_transfer",
