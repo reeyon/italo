@@ -1834,9 +1834,9 @@ bool Blockchain::get_output_distribution(uint64_t amount, uint64_t from_height, 
   {
     switch (m_nettype)
     {
-      case STAGENET: start_height = stagenet_hard_forks[6].height; break;
-      case TESTNET: start_height = testnet_hard_forks[6].height; break;
-      case MAINNET: start_height = mainnet_hard_forks[6].height; break;
+      case STAGENET: start_height = stagenet_hard_forks[7].height; break;
+      case TESTNET: start_height = testnet_hard_forks[7].height; break;
+      case MAINNET: start_height = mainnet_hard_forks[7].height; break;
       case FAKECHAIN: start_height = 0; break;
       default: return false;
     }
@@ -4503,7 +4503,7 @@ void Blockchain::cancel()
 }
 
 #if defined(PER_BLOCK_CHECKPOINT)
-static const char expected_block_hashes_hash[] = "0b8438efde64971ce4b74e8fe98b6518aa98b2a33f0a94102105516c74d3f31b";
+static const char expected_block_hashes_hash[] = "942dad37758d8c1c9e583847ae689c74f4b30c808aa8336fde3c99061d843a53";
 void Blockchain::load_compiled_in_block_hashes(const GetCheckpointsCallback& get_checkpoints)
 {
   if (get_checkpoints == nullptr || !m_fast_sync)
