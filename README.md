@@ -33,8 +33,7 @@ Our researchers are available on IRC in [#italo Dev on Freenode](https://webchat
 
 | Type      | Status |
 |-----------|--------|
-| Coverity  | [![Coverity Status](https://scan.coverity.com/projects/9657/badge.svg)](https://scan.coverity.com/projects/9657/)
-| Coveralls | [![Coveralls Status](https://coveralls.io/repos/github/italocoin-project/italo/badge.svg?branch=master)](https://coveralls.io/github/italocoin-project/italo?branch=master)
+| Travis  | [![Travis Status](https://api.travis-ci.org/italocoin-project/italo.svg?branch=master)](https://travis-ci.org/italocoin-project/italo)
 | License   | [![License](https://img.shields.io/badge/license-BSD3-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 ## Introduction
