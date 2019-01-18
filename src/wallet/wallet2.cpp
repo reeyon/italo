@@ -2042,8 +2042,8 @@ void wallet2::process_new_blockchain_entry(const cryptonote::block& b, const cry
 
   //handle transactions from new block
     
-  //optimization: seeking only for blocks that are not older then the wallet creation time plus 1 day. 1 day is for possible user incorrect time setup
-  if(b.timestamp + 60*60*24 > m_account.get_createtime() && height >= m_refresh_from_block_height)
+  //optimization: seeking only for blocks that are not older then the wallet creation time plus 2 day. 2 day is for possible user incorrect time setup
+  if(b.timestamp + 60*60*48 > m_account.get_createtime() && height >= m_refresh_from_block_height)
   {
     TIME_MEASURE_START(miner_tx_handle_time);
     if (m_refresh_type != RefreshNoCoinbase)
@@ -6443,21 +6443,17 @@ int wallet2::get_fee_algorithm() const
   // changes at v3, v5, v8
   if (use_fork_rules(HF_VERSION_PER_BYTE_FEE, 0))
     return 3;
-  if (use_fork_rules(5, 0))
+  if (use_fork_rules(7, 0))
     return 2;
-  if (use_fork_rules(3, 14))
-   return 1;
   return 0;
 }
 //------------------------------------------------------------------------------------------------------------------------------
 uint64_t wallet2::get_min_ring_size() const
 {
-  if (use_fork_rules(8, 10))
+  if (use_fork_rules(HF_VERSION_PER_BYTE_FEE, 10))
     return 11;
   if (use_fork_rules(7, 10))
     return 7;
-  if (use_fork_rules(6, 10))
-    return 5;
   if (use_fork_rules(2, 10))
     return 3;
   return 0;
@@ -6465,7 +6461,7 @@ uint64_t wallet2::get_min_ring_size() const
 //------------------------------------------------------------------------------------------------------------------------------
 uint64_t wallet2::get_max_ring_size() const
 {
-  if (use_fork_rules(8, 10))
+  if (use_fork_rules(HF_VERSION_PER_BYTE_FEE, 10))
     return 11;
   return 0;
 }
@@ -9479,7 +9475,7 @@ bool wallet2::use_fork_rules(uint8_t version, int64_t early_blocks) const
   result = m_node_rpc_proxy.get_earliest_height(version, earliest_height);
   throw_on_rpc_response_error(result, "get_hard_fork_info");
 
-  bool close_enough = height >=  earliest_height - early_blocks; // start using the rules that many blocks beforehand
+  bool close_enough = height >= earliest_height - early_blocks && earliest_height != std::numeric_limits<uint64_t>::max(); // start using the rules that many blocks beforehand
   if (close_enough)
     LOG_PRINT_L2("Using v" << (unsigned)version << " rules");
   else
