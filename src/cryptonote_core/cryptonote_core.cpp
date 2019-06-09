@@ -1374,7 +1374,8 @@ namespace cryptonote
     for (const auto &tx_hash: b.tx_hashes)
     {
       cryptonote::blobdata txblob;
-      CHECK_AND_ASSERT_THROW_MES(pool.get_transaction(tx_hash, txblob), "Transaction not found in pool");
+      if (!pool.get_transaction(tx_hash, txblob))
+        throw std::runtime_error("Transaction not found in pool");
       bce.txs.push_back(txblob);
     }
     return bce;

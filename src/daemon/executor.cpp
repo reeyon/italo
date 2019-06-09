@@ -58,13 +58,8 @@ namespace daemonize
       boost::program_options::variables_map const & vm
     )
   {
-<<<<<<< HEAD
     LOG_PRINT_L0("Italo '" << MONERO_RELEASE_NAME << "' (v" << MONERO_VERSION_FULL << ") Daemonised");
-    return t_daemon{vm};
-=======
-    LOG_PRINT_L0("Monero '" << MONERO_RELEASE_NAME << "' (v" << MONERO_VERSION_FULL << ") Daemonised");
     return t_daemon{vm, public_rpc_port};
->>>>>>> e4b049da05faeb7e1922d01aeebafa5f696c17d1
   }
 
   bool t_executor::run_non_interactive(

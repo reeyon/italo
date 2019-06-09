@@ -154,6 +154,7 @@
 #define HF_VERSION_PER_BYTE_FEE                 11
 #define HF_VERSION_SMALLER_BP                   12
 #define HF_VERSION_LONG_TERM_BLOCK_WEIGHT       12
+#define HF_VERSION_POW_VARIANT4                 12
 
 #define PER_KB_FEE_QUANTIZATION_DECIMALS        8
 
