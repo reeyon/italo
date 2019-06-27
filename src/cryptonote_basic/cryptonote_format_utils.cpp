@@ -415,7 +415,7 @@ namespace cryptonote
     const size_t n_outputs = tx.vout.size();
     if (n_outputs <= 2)
       return blob_size;
-    if (rv.type != rct::RCTTypeBulletproof)
+    if (rv.type != rct::RCTTypeBulletproof && rv.type != rct::RCTTypeBulletproof2)
       return blob_size;
     const uint64_t bp_base = 368;
     const size_t n_padded_outputs = rct::n_bulletproof_max_amounts(rv.p.bulletproofs);
@@ -1249,10 +1249,10 @@ namespace cryptonote
 
     if (hf_version >= HF_VERSION_POW_VARIANT4)
       cn_type = cn_slow_hash_type::cn_r;
-    else if (hf_version >= 7)
-      cn_type = crypto::cn_slow_hash_type::heavy_v2;
-      else if (hf_version >= 10)
+    else if (hf_version >= 10)
       cn_type = crypto::cn_slow_hash_type::heavy_v3;
+    else if (hf_version == 9)
+      cn_type = crypto::cn_slow_hash_type::heavy_v2;
 
     const int cn_variant = b.major_version >= HF_VERSION_POW_VARIANT4 ? 4 : b.major_version >= 10 ? 3 : b.major_version == 9 ? 2 : b.major_version >= 7 ? 1 : 0;
     crypto::cn_slow_hash(bd.data(), bd.size(), res, cn_variant, height, cn_type);

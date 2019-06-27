@@ -96,7 +96,7 @@ namespace crypto {
           v1.hash(data, length, hash.data);
         else if (type == cn_slow_hash_type::heavy_v2) 
           v2.hash(data, length, hash.data);
-        else 
+        else if (type == cn_slow_hash_type::heavy_v3)  
           v3.hash(data, length, hash.data);
       }
       break;
