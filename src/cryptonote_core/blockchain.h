@@ -37,6 +37,7 @@
 #include <boost/multi_index/global_fun.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/member.hpp>
+#include <boost/circular_buffer.hpp>
 #include <atomic>
 #include <functional>
 #include <unordered_map>
@@ -229,11 +230,12 @@ namespace cryptonote
     /**
      * @brief performs some preprocessing on a group of incoming blocks to speed up verification
      *
-     * @param blocks a list of incoming blocks
+     * @param blocks_entry a list of incoming blocks
+     * @param blocks the parsed blocks
      *
      * @return false on erroneous blocks, else true
      */
-    bool prepare_handle_incoming_blocks(const std::vector<block_complete_entry>  &blocks);
+    bool prepare_handle_incoming_blocks(const std::vector<block_complete_entry>  &blocks_entry, std::vector<block> &blocks);
 
     /**
      * @brief incoming blocks post-processing, cleanup, and disk sync
@@ -631,6 +633,13 @@ namespace cryptonote
     uint64_t get_current_cumulative_block_weight_limit() const;
 
     /**
+     * @brief gets the long term block weight for a new block
+     *
+     * @return the long term block weight
+     */
+    uint64_t get_next_long_term_block_weight(uint64_t block_weight) const;
+
+    /**
      * @brief gets the block weight median based on recent blocks (same window as for the limit)
      *
      * @return the median
@@ -676,6 +685,8 @@ namespace cryptonote
      */
     template<class t_ids_container, class t_tx_container, class t_missed_container>
     bool get_transactions_blobs(const t_ids_container& txs_ids, t_tx_container& txs, t_missed_container& missed_txs, bool pruned = false) const;
+    template<class t_ids_container, class t_tx_container, class t_missed_container>
+    bool get_split_transactions_blobs(const t_ids_container& txs_ids, t_tx_container& txs, t_missed_container& missed_txs) const;
     template<class t_ids_container, class t_tx_container, class t_missed_container>
     bool get_transactions(const t_ids_container& txs_ids, t_tx_container& txs, t_missed_container& missed_txs) const;
 
@@ -729,9 +740,16 @@ namespace cryptonote
     /**
      * @brief sets a block notify object to call for every new block
      *
-     * @param notify the notify object to cal at every new block
+     * @param notify the notify object to call at every new block
      */
     void set_block_notify(const std::shared_ptr<tools::Notify> &notify) { m_block_notify = notify; }
+
+    /**
+     * @brief sets a reorg notify object to call for every reorg
+     *
+     * @param notify the notify object to call at every reorg
+     */
+    void set_reorg_notify(const std::shared_ptr<tools::Notify> &notify) { m_reorg_notify = notify; }
 
     /**
      * @brief Put DB in safe sync mode
@@ -956,6 +974,10 @@ namespace cryptonote
     bool is_within_compiled_block_hash_area(uint64_t height) const;
     bool is_within_compiled_block_hash_area() const { return is_within_compiled_block_hash_area(m_db->height()); }
     uint64_t prevalidate_block_hashes(uint64_t height, const std::vector<crypto::hash> &hashes);
+    uint32_t get_blockchain_pruning_seed() const { return m_db->get_blockchain_pruning_seed(); }
+    bool prune_blockchain(uint32_t pruning_seed = 0);
+    bool update_blockchain_pruning();
+    bool check_blockchain_pruning();
 
     void lock();
     void unlock();
@@ -981,7 +1003,9 @@ namespace cryptonote
      */
     void pop_blocks(uint64_t nblocks);
 
+#ifndef IN_UNIT_TESTS
   private:
+#endif
 
     // TODO: evaluate whether or not each of these typedefs are left over from blockchain_storage
     typedef std::unordered_map<crypto::hash, size_t> blocks_by_id_index;
@@ -1034,6 +1058,8 @@ namespace cryptonote
     std::vector<uint64_t> m_timestamps;
     std::vector<difficulty_type> m_difficulties;
     uint64_t m_timestamps_and_difficulties_height;
+    uint64_t m_long_term_block_weights_window;
+    uint64_t m_long_term_effective_median_block_weight;
 
     epee::critical_section m_difficulty_lock;
     crypto::hash m_difficulty_for_next_block_top_hash;
@@ -1071,6 +1097,7 @@ namespace cryptonote
     bool m_btc_valid;
 
     std::shared_ptr<tools::Notify> m_block_notify;
+    std::shared_ptr<tools::Notify> m_reorg_notify;
 
     /**
      * @brief collects the keys for all outputs being "spent" as an input
@@ -1266,7 +1293,7 @@ namespace cryptonote
      * @param sz return-by-reference the list of weights
      * @param count the number of blocks to get weights for
      */
-    void get_last_n_blocks_weights(std::vector<size_t>& weights, size_t count) const;
+    void get_last_n_blocks_weights(std::vector<uint64_t>& weights, size_t count) const;
 
     /**
      * @brief checks if a transaction is unlocked (its outputs spendable)
@@ -1365,10 +1392,12 @@ namespace cryptonote
     /**
      * @brief calculate the block weight limit for the next block to be added
      *
+     * @param long_term_effective_median_block_weight optionally return that value
+     *
      * @return true
      */
-    bool update_next_cumulative_weight_limit();
-    void return_tx_to_pool(std::vector<transaction> &txs);
+    bool update_next_cumulative_weight_limit(uint64_t *long_term_effective_median_block_weight = NULL);
+    void return_tx_to_pool(std::vector<std::pair<transaction, blobdata>> &txs);
 
     /**
      * @brief make sure a transaction isn't attempting a double-spend

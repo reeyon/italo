@@ -79,7 +79,7 @@ namespace crypto {
     if (variant == 0) {
      ctx1.hash(data, length, hash.data);
     }else if (variant == 1){
-     cn_slow_hash(data, length, reinterpret_cast<char *>(&hash), variant, 0/*prehashed*/);
+     cn_slow_hash(data, length, reinterpret_cast<char *>(&hash), variant, 0/*prehashed*/, 0);
     }else if (variant == 2){
      ctx2.hash(data, length, hash.data);
     }else{
@@ -94,7 +94,7 @@ namespace crypto {
     if (variant == 0) {
      ctx1.hash(data, length, hash.data);
     }else if (variant == 1){
-     cn_slow_hash(data, length, reinterpret_cast<char *>(&hash), variant, 1/*prehashed*/);
+     cn_slow_hash(data, length, reinterpret_cast<char *>(&hash), variant, 1/*prehashed*/, 0);
     }else if (variant == 2){
      ctx2.hash(data, length, hash.data);
     }else{

@@ -1,10 +1,18 @@
+<<<<<<< HEAD
 packages:=boost openssl zeromq cppzmq expat ldns cppzmq readline libiconv qt hidapi protobuf libusb
+=======
+packages:=boost openssl zeromq cppzmq expat ldns cppzmq readline libiconv hidapi protobuf libusb
+>>>>>>> 5bbbe3902b4ee77ca1eb23edc0b5495812353b1f
 native_packages := native_ccache native_protobuf
 
 darwin_native_packages = native_biplist native_ds_store native_mac_alias
 darwin_packages = sodium-darwin
 
 linux_packages = eudev
+<<<<<<< HEAD
+=======
+qt_packages = qt
+>>>>>>> 5bbbe3902b4ee77ca1eb23edc0b5495812353b1f
 
 ifeq ($(host_os),linux)
 packages += unwind

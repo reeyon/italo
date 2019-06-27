@@ -57,7 +57,7 @@ namespace trezor {
    */
   class device_trezor : public hw::trezor::device_trezor_base, public hw::device_cold {
     protected:
-      void transaction_pre_check(std::shared_ptr<messages::italo::ItaloTransactionInitRequest> init_msg);
+      void transaction_pre_check(std::shared_ptr<messages::monero::MoneroTransactionInitRequest> init_msg);
       void transaction_check(const protocol::tx::TData & tdata, const hw::tx_aux_data & aux_data);
 
     public:

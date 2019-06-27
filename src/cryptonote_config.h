@@ -61,6 +61,8 @@
 #define CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2    60000 //size of block (bytes) after which reward for block calculated using block size
 #define CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1    20000 //size of block (bytes) after which reward for block calculated using block size - before first fork
 #define CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V5    300000 //size of block (bytes) after which reward for block calculated using block size - second change, from v5
+#define CRYPTONOTE_LONG_TERM_BLOCK_WEIGHT_WINDOW_SIZE   100000 // size in blocks of the long term block weight median window
+#define CRYPTONOTE_SHORT_TERM_BLOCK_WEIGHT_SURGE_FACTOR 50
 #define CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE          600
 #define CRYPTONOTE_DISPLAY_DECIMAL_POINT                12
 // COIN - number of smallest units in one coin
@@ -115,6 +117,7 @@
 #define P2P_DEFAULT_PACKET_MAX_SIZE                     50000000     //50000000 bytes maximum packet size
 #define P2P_DEFAULT_PEERS_IN_HANDSHAKE                  250
 #define P2P_DEFAULT_CONNECTION_TIMEOUT                  5000       //5 seconds
+#define P2P_DEFAULT_SOCKS_CONNECT_TIMEOUT               45         // seconds
 #define P2P_DEFAULT_PING_CONNECTION_TIMEOUT             2000       //2 seconds
 #define P2P_DEFAULT_INVOKE_TIMEOUT                      60*2*1000  //2 minutes
 #define P2P_DEFAULT_HANDSHAKE_INVOKE_TIMEOUT            5000       //5 seconds
@@ -148,6 +151,8 @@
 #define HF_VERSION_MIN_MIXIN_10                 11
 #define HF_VERSION_ENFORCE_RCT                  7
 #define HF_VERSION_PER_BYTE_FEE                 11
+#define HF_VERSION_SMALLER_BP                   12
+#define HF_VERSION_LONG_TERM_BLOCK_WEIGHT       12
 
 #define PER_KB_FEE_QUANTIZATION_DECIMALS        8
 
@@ -156,6 +161,11 @@
 #define DEFAULT_TXPOOL_MAX_WEIGHT               648000000ull // 3 days at 300000, in bytes
 
 #define BULLETPROOF_MAX_OUTPUTS                 16
+
+#define CRYPTONOTE_PRUNING_STRIPE_SIZE          4096 // the smaller, the smoother the increase
+#define CRYPTONOTE_PRUNING_LOG_STRIPES          3 // the higher, the more space saved
+#define CRYPTONOTE_PRUNING_TIP_BLOCKS           5500 // the smaller, the more space saved
+//#define CRYPTONOTE_PRUNING_DEBUG_SPOOF_SEED
 
 // New constants are intended to go here
 // New constants are intended to go here

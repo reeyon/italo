@@ -355,7 +355,7 @@ namespace trezor {
       signer->step_final_ack(ack_final);
     }
 
-    void device_trezor::transaction_pre_check(std::shared_ptr<messages::italo::ItaloTransactionInitRequest> init_msg)
+    void device_trezor::transaction_pre_check(std::shared_ptr<messages::monero::MoneroTransactionInitRequest> init_msg)
     {
       CHECK_AND_ASSERT_THROW_MES(init_msg, "TransactionInitRequest is empty");
       CHECK_AND_ASSERT_THROW_MES(init_msg->has_tsx_data(), "TransactionInitRequest has no transaction data");

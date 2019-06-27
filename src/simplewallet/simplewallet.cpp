@@ -116,7 +116,7 @@ typedef cryptonote::simple_wallet sw;
 #define LONG_PAYMENT_ID_SUPPORT_CHECK() \
   do { \
     if (!m_long_payment_id_support) { \
-      fail_msg_writer() << tr("Long payment IDs are obsolete. Use --long-payment-id-support if you really must use one."); \
+      fail_msg_writer() << tr("Long payment IDs are obsolete. Use --long-payment-id-support if you really must use one, and warn the recipient they are using an obsolete feature that will disappear in the future."); \
       return true; \
     } \
   } while(0)
@@ -2705,13 +2705,12 @@ simple_wallet::simple_wallet()
                                   "  Set the wallet's refresh behaviour.\n "
                                   "priority [0|1|2|3|4]\n "
                                   "  Set the fee to default/unimportant/normal/elevated/priority.\n "
-                                  "confirm-missing-payment-id <1|0>\n "
-                                  "ask-password <1|0>\n "
-                                  "unit <italo|millitalo|microtalo|nanotalo|picotalo>\n "
-                                  "  Set the default italo (sub-)unit.\n "
+                                  "confirm-missing-payment-id <1|0> (obsolete)\n "
                                   "ask-password <0|1|2   (or never|action|decrypt)>\n "
+                                  "  action: ask the password before many actions such as transfer, etc\n "
+                                  "  decrypt: same as action, but keeps the spend key encrypted in memory when not needed\n "
                                   "unit <italo|millitalo|microtalo|nanotalo|picotalo>\n "
-                                  "  Set the default italo (sub-)unit.\n "
+                                  "  Set the default monero (sub-)unit.\n "
                                   "min-outputs-count [n]\n "
                                   "  Try to keep at least that many outputs of value at least min-outputs-value.\n "
                                   "min-outputs-value [n]\n "
@@ -5694,30 +5693,6 @@ bool simple_wallet::transfer_main(int transfer_type, const std::vector<std::stri
         return false;
       }
     }
-    else if (m_wallet->get_account().get_device().has_tx_cold_sign())
-    {
-      try
-      {
-        tools::wallet2::signed_tx_set signed_tx;
-        if (!cold_sign_tx(ptx_vector, signed_tx, dsts_info, [&](const tools::wallet2::signed_tx_set &tx){ return accept_loaded_tx(tx); })){
-          fail_msg_writer() << tr("Failed to cold sign transaction with HW wallet");
-          return false;
-        }
-
-        commit_or_save(signed_tx.ptx, m_do_not_relay);
-      }
-      catch (const std::exception& e)
-      {
-        handle_transfer_exception(std::current_exception(), m_wallet->is_trusted_daemon());
-        return false;
-      }
-      catch (...)
-      {
-        LOG_ERROR("Unknown error");
-        fail_msg_writer() << tr("unknown error");
-        return false;
-      }
-    }
     else if (m_wallet->watch_only())
     {
       bool r = m_wallet->save_tx(ptx_vector, "unsigned_italo_tx");
@@ -8454,7 +8429,8 @@ bool simple_wallet::status(const std::vector<std::string> &args)
 {
   uint64_t local_height = m_wallet->get_blockchain_current_height();
   uint32_t version = 0;
-  if (!m_wallet->check_connection(&version))
+  bool ssl = false;
+  if (!m_wallet->check_connection(&version, &ssl))
   {
     success_msg_writer() << "Refreshed " << local_height << "/?, no daemon connected";
     return true;
@@ -8466,7 +8442,7 @@ bool simple_wallet::status(const std::vector<std::string> &args)
   {
     bool synced = local_height == bc_height;
     success_msg_writer() << "Refreshed " << local_height << "/" << bc_height << ", " << (synced ? "synced" : "syncing")
-        << ", daemon RPC v" << get_version_string(version);
+        << ", daemon RPC v" << get_version_string(version) << ", " << (ssl ? "SSL" : "no SSL");
   }
   else
   {

@@ -42,6 +42,7 @@ using namespace epee;
 #include "cryptonote_basic/account.h"
 #include "cryptonote_basic/cryptonote_basic_impl.h"
 #include "misc_language.h"
+#include "net/parse.h"
 #include "storages/http_abstract_invoke.h"
 #include "crypto/hash.h"
 #include "rpc/rpc_args.h"
@@ -75,6 +76,12 @@ namespace cryptonote
     command_line::add_arg(desc, arg_rpc_bind_port);
     command_line::add_arg(desc, arg_rpc_restricted_bind_port);
     command_line::add_arg(desc, arg_restricted_rpc);
+    command_line::add_arg(desc, arg_rpc_ssl);
+    command_line::add_arg(desc, arg_rpc_ssl_private_key);
+    command_line::add_arg(desc, arg_rpc_ssl_certificate);
+    command_line::add_arg(desc, arg_rpc_ssl_allowed_certificates);
+    command_line::add_arg(desc, arg_rpc_ssl_allowed_fingerprints);
+    command_line::add_arg(desc, arg_rpc_ssl_allow_any_cert);
     command_line::add_arg(desc, arg_bootstrap_daemon_address);
     command_line::add_arg(desc, arg_bootstrap_daemon_login);
     cryptonote::rpc_args::init_options(desc);
@@ -111,11 +118,11 @@ namespace cryptonote
         epee::net_utils::http::login login;
         login.username = bootstrap_daemon_login.substr(0, loc);
         login.password = bootstrap_daemon_login.substr(loc + 1);
-        m_http_client.set_server(m_bootstrap_daemon_address, login, false);
+        m_http_client.set_server(m_bootstrap_daemon_address, login, epee::net_utils::ssl_support_t::e_ssl_support_autodetect);
       }
       else
       {
-        m_http_client.set_server(m_bootstrap_daemon_address, boost::none, false);
+        m_http_client.set_server(m_bootstrap_daemon_address, boost::none, epee::net_utils::ssl_support_t::e_ssl_support_autodetect);
       }
       m_should_use_bootstrap_daemon = true;
     }
@@ -130,9 +137,36 @@ namespace cryptonote
     if (rpc_config->login)
       http_login.emplace(std::move(rpc_config->login->username), std::move(rpc_config->login->password).password());
 
+    epee::net_utils::ssl_support_t ssl_support;
+    const std::string ssl = command_line::get_arg(vm, arg_rpc_ssl);
+    if (!epee::net_utils::ssl_support_from_string(ssl_support, ssl))
+    {
+      MFATAL("Invalid RPC SSL support: " << ssl);
+      return false;
+    }
+    const std::string ssl_private_key = command_line::get_arg(vm, arg_rpc_ssl_private_key);
+    const std::string ssl_certificate = command_line::get_arg(vm, arg_rpc_ssl_certificate);
+    const std::vector<std::string> ssl_allowed_certificate_paths = command_line::get_arg(vm, arg_rpc_ssl_allowed_certificates);
+    std::list<std::string> ssl_allowed_certificates;
+    for (const std::string &path: ssl_allowed_certificate_paths)
+    {
+      ssl_allowed_certificates.push_back({});
+      if (!epee::file_io_utils::load_file_to_string(path, ssl_allowed_certificates.back()))
+      {
+        MERROR("Failed to load certificate: " << path);
+        ssl_allowed_certificates.back() = std::string();
+      }
+    }
+
+    const std::vector<std::string> ssl_allowed_fingerprint_strings = command_line::get_arg(vm, arg_rpc_ssl_allowed_fingerprints);
+    std::vector<std::vector<uint8_t>> ssl_allowed_fingerprints{ ssl_allowed_fingerprint_strings.size() };
+    std::transform(ssl_allowed_fingerprint_strings.begin(), ssl_allowed_fingerprint_strings.end(), ssl_allowed_fingerprints.begin(), epee::from_hex::vector);
+    const bool ssl_allow_any_cert = command_line::get_arg(vm, arg_rpc_ssl_allow_any_cert);
+
     auto rng = [](size_t len, uint8_t *ptr){ return crypto::rand(len, ptr); };
     return epee::http_server_impl_base<core_rpc_server, connection_context>::init(
-      rng, std::move(port), std::move(rpc_config->bind_ip), std::move(rpc_config->access_control_origins), std::move(http_login)
+      rng, std::move(port), std::move(rpc_config->bind_ip), std::move(rpc_config->access_control_origins), std::move(http_login),
+      ssl_support, std::make_pair(ssl_private_key, ssl_certificate), std::move(ssl_allowed_certificates), std::move(ssl_allowed_fingerprints), ssl_allow_any_cert
     );
   }
   //------------------------------------------------------------------------------------------------------------------------------
@@ -185,12 +219,12 @@ namespace cryptonote
     res.tx_count = m_core.get_blockchain_storage().get_total_transactions() - res.height; //without coinbase
     res.tx_pool_size = m_core.get_pool_transactions_count();
     res.alt_blocks_count = restricted ? 0 : m_core.get_blockchain_storage().get_alternative_blocks_count();
-    uint64_t total_conn = restricted ? 0 : m_p2p.get_connections_count();
-    res.outgoing_connections_count = restricted ? 0 : m_p2p.get_outgoing_connections_count();
+    uint64_t total_conn = restricted ? 0 : m_p2p.get_public_connections_count();
+    res.outgoing_connections_count = restricted ? 0 : m_p2p.get_public_outgoing_connections_count();
     res.incoming_connections_count = restricted ? 0 : (total_conn - res.outgoing_connections_count);
     res.rpc_connections_count = restricted ? 0 : get_connections_count();
-    res.white_peerlist_size = restricted ? 0 : m_p2p.get_peerlist_manager().get_white_peers_count();
-    res.grey_peerlist_size = restricted ? 0 : m_p2p.get_peerlist_manager().get_gray_peers_count();
+    res.white_peerlist_size = restricted ? 0 : m_p2p.get_public_white_peers_count();
+    res.grey_peerlist_size = restricted ? 0 : m_p2p.get_public_gray_peers_count();
 
     cryptonote::network_type net_type = nettype();
     res.mainnet = net_type == MAINNET;
@@ -489,8 +523,8 @@ namespace cryptonote
       vh.push_back(*reinterpret_cast<const crypto::hash*>(b.data()));
     }
     std::vector<crypto::hash> missed_txs;
-    std::vector<transaction> txs;
-    bool r = m_core.get_transactions(vh, txs, missed_txs);
+    std::vector<std::tuple<crypto::hash, cryptonote::blobdata, crypto::hash, cryptonote::blobdata>> txs;
+    bool r = m_core.get_split_transactions_blobs(vh, txs, missed_txs);
     if(!r)
     {
       res.status = "Failed";
@@ -510,7 +544,7 @@ namespace cryptonote
       if(r)
       {
         // sort to match original request
-        std::vector<transaction> sorted_txs;
+        std::vector<std::tuple<crypto::hash, cryptonote::blobdata, crypto::hash, cryptonote::blobdata>> sorted_txs;
         std::vector<tx_info>::const_iterator i;
         unsigned txs_processed = 0;
         for (const crypto::hash &h: vh)
@@ -523,7 +557,7 @@ namespace cryptonote
               return true;
             }
             // core returns the ones it finds in the right order
-            if (get_transaction_hash(txs[txs_processed]) != h)
+            if (std::get<0>(txs[txs_processed]) != h)
             {
               res.status = "Failed: tx hash mismatch";
               return true;
@@ -539,7 +573,16 @@ namespace cryptonote
               res.status = "Failed to parse and validate tx from blob";
               return true;
             }
-            sorted_txs.push_back(tx);
+            std::stringstream ss;
+            binary_archive<true> ba(ss);
+            bool r = const_cast<cryptonote::transaction&>(tx).serialize_base(ba);
+            if (!r)
+            {
+              res.status = "Failed to serialize transaction base";
+              return true;
+            }
+            const cryptonote::blobdata pruned = ss.str();
+            sorted_txs.push_back(std::make_tuple(h, pruned, get_transaction_prunable_hash(tx), std::string(i->tx_blob, pruned.size())));
             missed_txs.erase(std::find(missed_txs.begin(), missed_txs.end(), h));
             pool_tx_hashes.insert(h);
             const std::string hash_string = epee::string_tools::pod_to_hex(h);
@@ -568,11 +611,36 @@ namespace cryptonote
 
       crypto::hash tx_hash = *vhi++;
       e.tx_hash = *txhi++;
-      pruned_transaction pruned_tx{tx};
-      blobdata blob = req.prune ? t_serializable_object_to_blob(pruned_tx) : t_serializable_object_to_blob(tx);
-      e.as_hex = string_tools::buff_to_hex_nodelimer(blob);
-      if (req.decode_as_json)
-        e.as_json = req.prune ? obj_to_json_str(pruned_tx) : obj_to_json_str(tx);
+      e.prunable_hash = epee::string_tools::pod_to_hex(std::get<2>(tx));
+      if (req.split || req.prune || std::get<3>(tx).empty())
+      {
+        e.pruned_as_hex = string_tools::buff_to_hex_nodelimer(std::get<1>(tx));
+        if (!req.prune)
+          e.prunable_as_hex = string_tools::buff_to_hex_nodelimer(std::get<3>(tx));
+      }
+      else
+      {
+        cryptonote::blobdata tx_data;
+        if (req.prune)
+          tx_data = std::get<1>(tx);
+        else
+          tx_data = std::get<1>(tx) + std::get<3>(tx);
+        e.as_hex = string_tools::buff_to_hex_nodelimer(tx_data);
+        if (req.decode_as_json && !tx_data.empty())
+        {
+          cryptonote::transaction t;
+          if (cryptonote::parse_and_validate_tx_from_blob(tx_data, t))
+          {
+            if (req.prune)
+            {
+              pruned_transaction pruned_tx{t};
+              e.as_json = obj_to_json_str(pruned_tx);
+            }
+            else
+              e.as_json = obj_to_json_str(t);
+          }
+        }
+      }
       e.in_pool = pool_tx_hashes.find(tx_hash) != pool_tx_hashes.end();
       if (e.in_pool)
       {
@@ -868,26 +936,26 @@ namespace cryptonote
     PERF_TIMER(on_get_peer_list);
     std::vector<nodetool::peerlist_entry> white_list;
     std::vector<nodetool::peerlist_entry> gray_list;
-    m_p2p.get_peerlist_manager().get_peerlist_full(gray_list, white_list);
+    m_p2p.get_public_peerlist(gray_list, white_list);
 
     res.white_list.reserve(white_list.size());
     for (auto & entry : white_list)
     {
-      if (entry.adr.get_type_id() == epee::net_utils::ipv4_network_address::ID)
+      if (entry.adr.get_type_id() == epee::net_utils::ipv4_network_address::get_type_id())
         res.white_list.emplace_back(entry.id, entry.adr.as<epee::net_utils::ipv4_network_address>().ip(),
-            entry.adr.as<epee::net_utils::ipv4_network_address>().port(), entry.last_seen);
+            entry.adr.as<epee::net_utils::ipv4_network_address>().port(), entry.last_seen, entry.pruning_seed);
       else
-        res.white_list.emplace_back(entry.id, entry.adr.str(), entry.last_seen);
+        res.white_list.emplace_back(entry.id, entry.adr.str(), entry.last_seen, entry.pruning_seed);
     }
 
     res.gray_list.reserve(gray_list.size());
     for (auto & entry : gray_list)
     {
-      if (entry.adr.get_type_id() == epee::net_utils::ipv4_network_address::ID)
+      if (entry.adr.get_type_id() == epee::net_utils::ipv4_network_address::get_type_id())
         res.gray_list.emplace_back(entry.id, entry.adr.as<epee::net_utils::ipv4_network_address>().ip(),
-            entry.adr.as<epee::net_utils::ipv4_network_address>().port(), entry.last_seen);
+            entry.adr.as<epee::net_utils::ipv4_network_address>().port(), entry.last_seen, entry.pruning_seed);
       else
-        res.gray_list.emplace_back(entry.id, entry.adr.str(), entry.last_seen);
+        res.gray_list.emplace_back(entry.id, entry.adr.str(), entry.last_seen, entry.pruning_seed);
     }
 
     res.status = CORE_RPC_STATUS_OK;
@@ -1287,6 +1355,7 @@ namespace cryptonote
     response.block_size = response.block_weight = m_core.get_blockchain_storage().get_db().get_block_weight(height);
     response.num_txes = blk.tx_hashes.size();
     response.pow_hash = fill_pow_hash ? string_tools::pod_to_hex(get_block_longhash(blk, height)) : "";
+    response.long_term_weight = m_core.get_blockchain_storage().get_db().get_block_long_term_weight(height);
     return true;
   }
   //------------------------------------------------------------------------------------------------------------------------------
@@ -1612,12 +1681,12 @@ namespace cryptonote
     res.tx_count = m_core.get_blockchain_storage().get_total_transactions() - res.height; //without coinbase
     res.tx_pool_size = m_core.get_pool_transactions_count();
     res.alt_blocks_count = restricted ? 0 : m_core.get_blockchain_storage().get_alternative_blocks_count();
-    uint64_t total_conn = restricted ? 0 : m_p2p.get_connections_count();
-    res.outgoing_connections_count = restricted ? 0 : m_p2p.get_outgoing_connections_count();
+    uint64_t total_conn = restricted ? 0 : m_p2p.get_public_connections_count();
+    res.outgoing_connections_count = restricted ? 0 : m_p2p.get_public_outgoing_connections_count();
     res.incoming_connections_count = restricted ? 0 : (total_conn - res.outgoing_connections_count);
     res.rpc_connections_count = restricted ? 0 : get_connections_count();
-    res.white_peerlist_size = restricted ? 0 : m_p2p.get_peerlist_manager().get_white_peers_count();
-    res.grey_peerlist_size = restricted ? 0 : m_p2p.get_peerlist_manager().get_gray_peers_count();
+    res.white_peerlist_size = restricted ? 0 : m_p2p.get_public_white_peers_count();
+    res.grey_peerlist_size = restricted ? 0 : m_p2p.get_public_gray_peers_count();
 
     cryptonote::network_type net_type = nettype();
     res.mainnet = net_type == MAINNET;
@@ -1696,12 +1765,14 @@ namespace cryptonote
       epee::net_utils::network_address na;
       if (!i->host.empty())
       {
-        if (!epee::net_utils::create_network_address(na, i->host))
+        auto na_parsed = net::get_network_address(i->host, 0);
+        if (!na_parsed)
         {
           error_resp.code = CORE_RPC_ERROR_CODE_WRONG_PARAM;
           error_resp.message = "Unsupported host type";
           return false;
         }
+        na = std::move(*na_parsed);
       }
       else
       {
@@ -1924,11 +1995,7 @@ namespace cryptonote
   bool core_rpc_server::on_out_peers(const COMMAND_RPC_OUT_PEERS::request& req, COMMAND_RPC_OUT_PEERS::response& res, const connection_context *ctx)
   {
     PERF_TIMER(on_out_peers);
-    size_t n_connections = m_p2p.get_outgoing_connections_count();
-    size_t n_delete = (n_connections > req.out_peers) ? n_connections - req.out_peers : 0;
-    m_p2p.m_config.m_net_config.max_out_connection_count = req.out_peers;
-    if (n_delete)
-      m_p2p.delete_out_connections(n_delete);
+    m_p2p.change_max_out_public_peers(req.out_peers);
     res.status = CORE_RPC_STATUS_OK;
     return true;
   }
@@ -1936,11 +2003,7 @@ namespace cryptonote
   bool core_rpc_server::on_in_peers(const COMMAND_RPC_IN_PEERS::request& req, COMMAND_RPC_IN_PEERS::response& res, const connection_context *ctx)
   {
     PERF_TIMER(on_in_peers);
-    size_t n_connections = m_p2p.get_incoming_connections_count();
-    size_t n_delete = (n_connections > req.in_peers) ? n_connections - req.in_peers : 0;
-    m_p2p.m_config.m_net_config.max_in_connection_count = req.in_peers;
-    if (n_delete)
-      m_p2p.delete_in_connections(n_delete);
+    m_p2p.change_max_in_public_peers(req.in_peers);
     res.status = CORE_RPC_STATUS_OK;
     return true;
   }
@@ -2122,6 +2185,7 @@ namespace cryptonote
     m_core.get_blockchain_top(res.height, top_hash);
     ++res.height; // turn top block height into blockchain height
     res.target_height = m_core.get_target_blockchain_height();
+    res.next_needed_pruning_seed = m_p2p.get_payload_object().get_next_needed_pruning_stripe().second;
 
     for (const auto &c: m_p2p.get_payload_object().get_connections())
       res.peers.push_back({c});
@@ -2136,6 +2200,7 @@ namespace cryptonote
       res.spans.push_back({span.start_block_height, span.nblocks, span_connection_id, (uint32_t)(span.rate + 0.5f), speed, span.size, address});
       return true;
     });
+    res.overview = block_queue.get_overview(res.height);
 
     res.status = CORE_RPC_STATUS_OK;
     return true;
@@ -2235,6 +2300,29 @@ namespace cryptonote
     return true;
   }
   //------------------------------------------------------------------------------------------------------------------------------
+  bool core_rpc_server::on_prune_blockchain(const COMMAND_RPC_PRUNE_BLOCKCHAIN::request& req, COMMAND_RPC_PRUNE_BLOCKCHAIN::response& res, epee::json_rpc::error& error_resp, const connection_context *ctx)
+  {
+    try
+    {
+      if (!(req.check ? m_core.check_blockchain_pruning() : m_core.prune_blockchain()))
+      {
+        error_resp.code = CORE_RPC_ERROR_CODE_INTERNAL_ERROR;
+        error_resp.message = req.check ? "Failed to check blockchain pruning" : "Failed to prune blockchain";
+        return false;
+      }
+      res.pruning_seed = m_core.get_blockchain_pruning_seed();
+    }
+    catch (const std::exception &e)
+    {
+      error_resp.code = CORE_RPC_ERROR_CODE_INTERNAL_ERROR;
+      error_resp.message = "Failed to prune blockchain";
+      return false;
+    }
+
+    res.status = CORE_RPC_STATUS_OK;
+    return true;
+  }
+  //------------------------------------------------------------------------------------------------------------------------------
 
 
   const command_line::arg_descriptor<std::string, false, true, 2> core_rpc_server::arg_rpc_bind_port = {
@@ -2260,6 +2348,40 @@ namespace cryptonote
   const command_line::arg_descriptor<bool> core_rpc_server::arg_restricted_rpc = {
       "restricted-rpc"
     , "Restrict RPC to view only commands and do not return privacy sensitive data in RPC calls"
+    , false
+    };
+
+  const command_line::arg_descriptor<std::string> core_rpc_server::arg_rpc_ssl = {
+      "rpc-ssl"
+    , "Enable SSL on RPC connections: enabled|disabled|autodetect"
+    , "autodetect"
+    };
+
+  const command_line::arg_descriptor<std::string> core_rpc_server::arg_rpc_ssl_private_key = {
+      "rpc-ssl-private-key"
+    , "Path to a PEM format private key"
+    , ""
+    };
+
+  const command_line::arg_descriptor<std::string> core_rpc_server::arg_rpc_ssl_certificate = {
+      "rpc-ssl-certificate"
+    , "Path to a PEM format certificate"
+    , ""
+    };
+
+  const command_line::arg_descriptor<std::vector<std::string>> core_rpc_server::arg_rpc_ssl_allowed_certificates = {
+      "rpc-ssl-allowed-certificates"
+    , "List of paths to PEM format certificates of allowed peers (all allowed if empty)"
+    };
+
+  const command_line::arg_descriptor<std::vector<std::string>> core_rpc_server::arg_rpc_ssl_allowed_fingerprints = {
+      "rpc-ssl-allowed-fingerprints"
+    , "List of certificate fingerprints to allow"
+  };
+
+  const command_line::arg_descriptor<bool> core_rpc_server::arg_rpc_ssl_allow_any_cert = {
+      "rpc-ssl-allow-any-cert"
+    , "Allow any peer certificate, rather than just those on the allowed list"
     , false
     };
 

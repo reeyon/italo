@@ -50,6 +50,10 @@ set(crypto_sources
   cn_slow_hash_soft.cpp
   tree-hash.c)
 
+if(ARCH_ID STREQUAL "i386" OR ARCH_ID STREQUAL "x86_64" OR ARCH_ID STREQUAL "x86-64")
+list(APPEND crypto_sources CryptonightR_template.S)
+endif()
+
 set(crypto_headers)
 
 set(crypto_private_headers
@@ -105,4 +109,5 @@ if (ANDROID OR IOS)
   endif()
 endif()
 
-
+# cheat because cmake and ccache hate each other
+set_property(SOURCE CryptonightR_template.S PROPERTY LANGUAGE C)

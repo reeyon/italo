@@ -210,7 +210,7 @@ namespace trezor {
 
     bool reset();
 
-    // Default derivation path for Italo
+    // Default derivation path for Monero
     static const uint32_t DEFAULT_BIP44_PATH[2];
 
     std::shared_ptr<Transport> get_transport(){
