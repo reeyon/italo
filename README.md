@@ -46,6 +46,8 @@ Italo is a private, secure, untraceable, decentralised digital currency. You are
 
 **Untraceability:** By taking advantage of ring signatures, a special property of a certain type of cryptography, Italo is able to ensure that transactions are not only untraceable, but have an optional measure of ambiguity that ensures that transactions cannot easily be tied back to an individual user or computer.
 
+**Decentralization:** The utility of monero depends on its decentralised peer-to-peer consensus network - anyone should be able to run the monero software, validate the integrity of the blockchain, and participate in all aspects of the monero network using consumer-grade commodity hardware. Decentralization of the monero network is maintained by software development that minimizes the costs of running the monero software and inhibits the proliferation of specialized, non-commodity hardware.  
+
 ## About this project
 
 This is the core implementation of Italo. It is open source and completely free to use without restrictions, except for those specified in the license agreement below. There are no restrictions on anyone creating an alternative implementation of Italo that uses the protocol and network in a compatible manner.
@@ -159,7 +161,7 @@ If you already have a repo cloned, initialize and update:
 Italo uses the CMake build system and a top-level [Makefile](Makefile) that
 invokes cmake commands as needed.
 
-#### On Linux and OS X
+#### On Linux and macOS
 
 * Install the dependencies
 * Change to the root of the source code directory, change to the most recent release branch, and build:
@@ -173,7 +175,7 @@ invokes cmake commands as needed.
     this to be worthwhile, the machine should have one core and about 2GB of RAM
     available per thread.
 
-    *Note*: If cmake can not find zmq.hpp file on OS X, installing `zmq.hpp` from
+    *Note*: If cmake can not find zmq.hpp file on macOS, installing `zmq.hpp` from
     https://github.com/zeromq/cppzmq to `/usr/local/include` should fix that error.
 
     *Note*: The instructions above will compile the most stable release of the

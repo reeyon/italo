@@ -610,9 +610,11 @@ namespace wallet_rpc
     struct request_t
     {
       std::string unsigned_txset;
+      std::string multisig_txset;
 
       BEGIN_KV_SERIALIZE_MAP()
         KV_SERIALIZE(unsigned_txset)
+        KV_SERIALIZE(multisig_txset)
       END_KV_SERIALIZE_MAP()
     };
     typedef epee::misc_utils::struct_init<request_t> request;
@@ -1357,6 +1359,7 @@ namespace wallet_rpc
     std::string type;
     uint64_t unlock_time;
     cryptonote::subaddress_index subaddr_index;
+    std::vector<cryptonote::subaddress_index> subaddr_indices;
     std::string address;
     bool double_spend_seen;
     uint64_t confirmations;
@@ -1374,6 +1377,7 @@ namespace wallet_rpc
       KV_SERIALIZE(type);
       KV_SERIALIZE(unlock_time)
       KV_SERIALIZE(subaddr_index);
+      KV_SERIALIZE(subaddr_indices);
       KV_SERIALIZE(address);
       KV_SERIALIZE(double_spend_seen)
       KV_SERIALIZE_OPT(confirmations, (uint64_t)0)
@@ -2072,6 +2076,39 @@ namespace wallet_rpc
       END_KV_SERIALIZE_MAP()
     };
     typedef epee::misc_utils::struct_init<response_t> response;
+  };
+
+  struct COMMAND_RPC_GENERATE_FROM_KEYS
+  {
+    struct request
+    {
+      uint64_t restore_height;
+      std::string filename;
+      std::string address;
+      std::string spendkey;
+      std::string viewkey;
+      std::string password;
+
+      BEGIN_KV_SERIALIZE_MAP()
+      KV_SERIALIZE_OPT(restore_height, (uint64_t)0)
+      KV_SERIALIZE(filename)
+      KV_SERIALIZE(address)
+      KV_SERIALIZE(spendkey)
+      KV_SERIALIZE(viewkey)
+      KV_SERIALIZE(password)
+      END_KV_SERIALIZE_MAP()
+    };
+
+    struct response
+    {
+      std::string address;
+      std::string info;
+
+      BEGIN_KV_SERIALIZE_MAP()
+      KV_SERIALIZE(address)
+      KV_SERIALIZE(info)
+      END_KV_SERIALIZE_MAP()
+    };
   };
 
   struct COMMAND_RPC_RESTORE_DETERMINISTIC_WALLET
