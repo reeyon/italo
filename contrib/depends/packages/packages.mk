@@ -14,6 +14,10 @@ linux_packages = eudev
 qt_packages = qt
 >>>>>>> 5bbbe3902b4ee77ca1eb23edc0b5495812353b1f
 
+ifeq ($(build_tests),ON)
+packages += gtest
+endif
+
 ifeq ($(host_os),linux)
 packages += unwind
 packages += sodium
