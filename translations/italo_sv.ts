@@ -2,7 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
-    <name>Monero::AddressBookImpl</name>
+    <name>Italo::AddressBookImpl</name>
     <message>
         <location filename="../src/wallet/api/address_book.cpp" line="53"/>
         <source>Invalid destination address</source>
@@ -25,7 +25,7 @@
     </message>
 </context>
 <context>
-    <name>Monero::PendingTransactionImpl</name>
+    <name>Italo::PendingTransactionImpl</name>
     <message>
         <location filename="../src/wallet/api/pending_transaction.cpp" line="91"/>
         <source>Attempting to save transaction to file, but specified file(s) exist. Exiting to not risk overwriting. File:</source>
@@ -78,7 +78,7 @@
     </message>
 </context>
 <context>
-    <name>Monero::UnsignedTransactionImpl</name>
+    <name>Italo::UnsignedTransactionImpl</name>
     <message>
         <location filename="../src/wallet/api/unsigned_transaction.cpp" line="75"/>
         <source>This is a watch only wallet</source>
@@ -132,7 +132,7 @@
     </message>
 </context>
 <context>
-    <name>Monero::WalletImpl</name>
+    <name>Italo::WalletImpl</name>
     <message>
         <location filename="../src/wallet/api/wallet.cpp" line="1459"/>
         <source>payment id has invalid format, expected 16 or 64 character hex string: </source>
@@ -1498,17 +1498,17 @@ Denna transaktion låses upp vid block %llu, om ungefär %s dagar (förutsatt en
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2145"/>
-        <source>Welcome to Monero, the private cryptocurrency.</source>
+        <source>Welcome to Italo, the private cryptocurrency.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2147"/>
-        <source>Monero, like Bitcoin, is a cryptocurrency. That is, it is digital money.</source>
+        <source>Italo, like Bitcoin, is a cryptocurrency. That is, it is digital money.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2148"/>
-        <source>Unlike Bitcoin, your Monero transactions and balance stay private, and not visible to the world by default.</source>
+        <source>Unlike Bitcoin, your Italo transactions and balance stay private, and not visible to the world by default.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1518,32 +1518,32 @@ Denna transaktion låses upp vid block %llu, om ungefär %s dagar (förutsatt en
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2151"/>
-        <source>Monero protects your privacy on the blockchain, and while Monero strives to improve all the time,</source>
+        <source>Italo protects your privacy on the blockchain, and while Italo strives to improve all the time,</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2152"/>
-        <source>no privacy technology can be 100% perfect, Monero included.</source>
+        <source>no privacy technology can be 100% perfect, Italo included.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2153"/>
-        <source>Monero cannot protect you from malware, and it may not be as effective as we hope against powerful adversaries.</source>
+        <source>Italo cannot protect you from malware, and it may not be as effective as we hope against powerful adversaries.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2154"/>
-        <source>Flaws in Monero may be discovered in the future, and attacks may be developed to peek under some</source>
+        <source>Flaws in Italo may be discovered in the future, and attacks may be developed to peek under some</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2155"/>
-        <source>of the layers of privacy Monero provides. Be safe and practice defense in depth.</source>
+        <source>of the layers of privacy Italo provides. Be safe and practice defense in depth.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2157"/>
-        <source>Welcome to Monero and financial privacy. For more information, see https://getmonero.org/</source>
+        <source>Welcome to Italo and financial privacy. For more information, see https://getitalo.org/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1634,8 +1634,8 @@ Amount, Spent(&quot;T&quot;|&quot;F&quot;), &quot;frozen&quot;|&quot;locked&quot
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2797"/>
-        <source>Donate &lt;amount&gt; to the development team (donate.getmonero.org).</source>
-        <translation>Donera &lt;belopp&gt; till utvecklingsteamet (donate.getmonero.org).</translation>
+        <source>Donate &lt;amount&gt; to the development team (donate.getitalo.org).</source>
+        <translation>Donera &lt;belopp&gt; till utvecklingsteamet (donate.getitalo.org).</translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="2804"/>
@@ -1722,8 +1722,8 @@ Om argumentet &quot;tag_description&quot; anges, så tilldelas taggen &lt;taggna
  ask-password &lt;0|1|2   (or never|action|decrypt)&gt;
    action: ask the password before many actions such as transfer, etc
    decrypt: same as action, but keeps the spend key encrypted in memory when not needed
- unit &lt;monero|millinero|micronero|nanonero|piconero&gt;
-   Set the default monero (sub-)unit.
+ unit &lt;italo|millinero|micronero|nanonero|piconero&gt;
+   Set the default italo (sub-)unit.
  min-outputs-count [n]
    Try to keep at least that many outputs of value at least min-outputs-value.
  min-outputs-value [n]
@@ -1739,12 +1739,12 @@ Om argumentet &quot;tag_description&quot; anges, så tilldelas taggen &lt;taggna
  auto-low-priority &lt;1|0&gt;
    Whether to automatically use the low priority fee level when it&apos;s safe to do so.
  segregate-pre-fork-outputs &lt;1|0&gt;
-   Set this if you intend to spend outputs on both Monero AND a key reusing fork.
+   Set this if you intend to spend outputs on both Italo AND a key reusing fork.
  key-reuse-mitigation2 &lt;1|0&gt;
-   Set this if you are not sure whether you will spend on a key reusing Monero fork later.
+   Set this if you are not sure whether you will spend on a key reusing Italo fork later.
 subaddress-lookahead &lt;major&gt;:&lt;minor&gt;
    Set the lookahead sizes for the subaddress hash table.
-   Set this if you are not sure whether you will spend on a key reusing Monero fork later.
+   Set this if you are not sure whether you will spend on a key reusing Italo fork later.
  segregation-height &lt;n&gt;
    Set to the height of a key reusing fork you want to use, 0 to use default.</source>
         <translation type="unfinished"></translation>
@@ -1950,7 +1950,7 @@ Annars bevisar du reserven för det minsta möjliga belopp över &lt;belopp&gt; 
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="3196"/>
-        <source>Prints basic info about Monero for first time users</source>
+        <source>Prints basic info about Italo for first time users</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1960,7 +1960,7 @@ Annars bevisar du reserven för det minsta möjliga belopp över &lt;belopp&gt; 
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="3258"/>
-        <source> (set this to support the network and to get a chance to receive new monero)</source>
+        <source> (set this to support the network and to get a chance to receive new italo)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2056,7 +2056,7 @@ Annars bevisar du reserven för det minsta möjliga belopp över &lt;belopp&gt; 
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="4093"/>
-        <source>If you are new to Monero, type &quot;welcome&quot; for a brief overview.</source>
+        <source>If you are new to Italo, type &quot;welcome&quot; for a brief overview.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2085,7 +2085,7 @@ Annars bevisar du reserven för det minsta möjliga belopp över &lt;belopp&gt; 
 To start synchronizing with the daemon, use the &quot;refresh&quot; command.
 Use the &quot;help&quot; command to see the list of available commands.
 Use &quot;help &lt;command&gt;&quot; to see a command&apos;s documentation.
-Always use the &quot;exit&quot; command when closing monero-wallet-cli to save 
+Always use the &quot;exit&quot; command when closing italo-wallet-cli to save 
 your current session&apos;s state. Otherwise, you might need to synchronize 
 your wallet again (your wallet keys are NOT at risk in any case).
 </source>
@@ -2093,7 +2093,7 @@ your wallet again (your wallet keys are NOT at risk in any case).
 Använd kommandot &quot;refresh&quot; för att starta synkronisering med daemonen.
 Använd kommandot &quot;help&quot; för att visa en lista över tillgängliga kommandon.
 Använd &quot;help &lt;kommando&gt;&quot; för att visa dokumentation för kommandot.
-Använd alltid kommandot &quot;exit&quot; när du stänger monero-wallet-cli så att ditt aktuella sessionstillstånd sparas. Annars kan du bli tvungen att synkronisera
+Använd alltid kommandot &quot;exit&quot; när du stänger italo-wallet-cli så att ditt aktuella sessionstillstånd sparas. Annars kan du bli tvungen att synkronisera
 din plånbok igen (din plånboks nycklar är dock INTE hotade i vilket fall som helst).
 </translation>
     </message>
@@ -2138,7 +2138,7 @@ din plånbok igen (din plånboks nycklar är dock INTE hotade i vilket fall som 
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="4683"/>
-        <source>Background mining enabled. Thank you for supporting the Monero network.</source>
+        <source>Background mining enabled. Thank you for supporting the Italo network.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2164,7 +2164,7 @@ din plånbok igen (din plånboks nycklar är dock INTE hotade i vilket fall som 
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="4752"/>
-        <source>Enabling this supports the network you are using, and makes you eligible for receiving new monero</source>
+        <source>Enabling this supports the network you are using, and makes you eligible for receiving new italo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2441,7 +2441,7 @@ Varning: Några ingångsnycklar som spenderas kommer från </translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="6830"/>
-        <source>Donating %s %s to The Monero Project (donate.getmonero.org or %s).</source>
+        <source>Donating %s %s to The Italo Project (donate.getitalo.org or %s).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3070,7 +3070,7 @@ Get help about a subcommand with: help mms &lt;subcommand&gt;, or mms help &lt;s
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="3083"/>
-        <source>Set or modify authorized signer info (single-word label, transport address, Monero address), or list all signers</source>
+        <source>Set or modify authorized signer info (single-word label, transport address, Italo address), or list all signers</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3207,8 +3207,8 @@ Key Image, &quot;absolute&quot;, list of rings</source>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="3301"/>
-        <source>monero, millinero, micronero, nanonero, piconero</source>
-        <translation>monero, millinero, micronero, nanonero, piconero</translation>
+        <source>italo, millinero, micronero, nanonero, piconero</source>
+        <translation>italo, millinero, micronero, nanonero, piconero</translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="3312"/>
@@ -3813,7 +3813,7 @@ Input %llu/%llu (%s): amount=%s</source>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="9565"/>
-        <source>Monero Address</source>
+        <source>Italo Address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3920,17 +3920,17 @@ Input %llu/%llu (%s): amount=%s</source>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="9771"/>
-        <source>mms signer [&lt;number&gt; &lt;label&gt; [&lt;transport_address&gt; [&lt;monero_address&gt;]]]</source>
+        <source>mms signer [&lt;number&gt; &lt;label&gt; [&lt;transport_address&gt; [&lt;italo_address&gt;]]]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="9790"/>
-        <source>Invalid Monero address</source>
+        <source>Invalid Italo address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="9797"/>
-        <source>Wallet state does not allow changing Monero addresses anymore</source>
+        <source>Wallet state does not allow changing Italo addresses anymore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5099,7 +5099,7 @@ Use &quot;mms note&quot; to display the waiting notes</source>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="447"/>
-        <source> Monero Address = </source>
+        <source> Italo Address = </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5245,9 +5245,9 @@ Use &quot;mms note&quot; to display the waiting notes</source>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="9382"/>
-        <source>This is the command line monero wallet. It needs to connect to a monero
+        <source>This is the command line italo wallet. It needs to connect to a italo
 daemon to work correctly.
-WARNING: Do not reuse your Monero keys on another fork, UNLESS this fork has key reuse mitigations built in. Doing so will harm your privacy.</source>
+WARNING: Do not reuse your Italo keys on another fork, UNLESS this fork has key reuse mitigations built in. Doing so will harm your privacy.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5267,8 +5267,8 @@ WARNING: Do not reuse your Monero keys on another fork, UNLESS this fork has key
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="150"/>
-        <source>The newly created transaction will not be relayed to the monero network</source>
-        <translation>Den nyss skapade transaktionen kommer inte att skickas vidare till monero-nätverket</translation>
+        <source>The newly created transaction will not be relayed to the italo network</source>
+        <translation>Den nyss skapade transaktionen kommer inte att skickas vidare till italo-nätverket</translation>
     </message>
     <message>
         <location filename="../src/simplewallet/simplewallet.cpp" line="151"/>
@@ -5600,12 +5600,12 @@ WARNING: Do not reuse your Monero keys on another fork, UNLESS this fork has key
     </message>
     <message>
         <location filename="../src/wallet/wallet2.cpp" line="1625"/>
-        <source>Password is needed to compute key image for incoming monero</source>
+        <source>Password is needed to compute key image for incoming italo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/wallet/wallet2.cpp" line="1626"/>
-        <source>Invalid password: password is needed to compute key image for incoming monero</source>
+        <source>Invalid password: password is needed to compute key image for incoming italo</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5713,9 +5713,9 @@ WARNING: Do not reuse your Monero keys on another fork, UNLESS this fork has key
     </message>
     <message>
         <location filename="../src/wallet/wallet_rpc_server.cpp" line="4409"/>
-        <source>This is the RPC monero wallet. It needs to connect to a monero
+        <source>This is the RPC italo wallet. It needs to connect to a italo
 daemon to work correctly.</source>
-        <translation>Detta är RPC-plånboken för monero. Den måste ansluta till en Monero-
+        <translation>Detta är RPC-plånboken för italo. Den måste ansluta till en Italo-
 daemon för att fungera korrekt.</translation>
     </message>
     <message>
@@ -5827,9 +5827,9 @@ daemon för att fungera korrekt.</translation>
     </message>
     <message>
         <location filename="../src/wallet/wallet_args.cpp" line="144"/>
-        <source>This is the command line monero wallet. It needs to connect to a monero
+        <source>This is the command line italo wallet. It needs to connect to a italo
 daemon to work correctly.</source>
-        <translation>Detta är kommandoradsplånboken för Monero. Den måste ansluta till en Monero-
+        <translation>Detta är kommandoradsplånboken för Italo. Den måste ansluta till en Italo-
 daemon för att fungera korrekt.</translation>
     </message>
     <message>

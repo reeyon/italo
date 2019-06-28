@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018, The Monero Project
+// Copyright (c) 2017-2018, The Italo Project
 //
 // All rights reserved.
 //
@@ -262,9 +262,9 @@ namespace trezor {
       require_initialized();
 
       auto req = protocol::tx::get_tx_key(tx_aux_data);
-      this->set_msg_addr<messages::monero::MoneroGetTxKeyRequest>(req.get());
+      this->set_msg_addr<messages::italo::ItaloGetTxKeyRequest>(req.get());
 
-      auto response = this->client_exchange<messages::monero::MoneroGetTxKeyAck>(req);
+      auto response = this->client_exchange<messages::italo::ItaloGetTxKeyAck>(req);
       MTRACE("Get TX key response received");
 
       protocol::tx::get_tx_key_ack(tx_keys, tx_aux_data.tx_prefix_hash, view_key_priv, response);
@@ -293,8 +293,8 @@ namespace trezor {
       auto ack1 = this->client_exchange<messages::italo::ItaloKeyImageExportInitAck>(req);
 =======
       EVENT_PROGRESS(0.);
-      this->set_msg_addr<messages::monero::MoneroKeyImageExportInitRequest>(req.get());
-      auto ack1 = this->client_exchange<messages::monero::MoneroKeyImageExportInitAck>(req);
+      this->set_msg_addr<messages::italo::ItaloKeyImageExportInitRequest>(req.get());
+      auto ack1 = this->client_exchange<messages::italo::ItaloKeyImageExportInitAck>(req);
 >>>>>>> e4b049da05faeb7e1922d01aeebafa5f696c17d1
 
       const auto batch_size = 10;
@@ -378,9 +378,9 @@ namespace trezor {
       device_state_reset_unsafe();
       require_initialized();
 
-      auto req = std::make_shared<messages::monero::MoneroLiveRefreshStartRequest>();
-      this->set_msg_addr<messages::monero::MoneroLiveRefreshStartRequest>(req.get());
-      this->client_exchange<messages::monero::MoneroLiveRefreshStartAck>(req);
+      auto req = std::make_shared<messages::italo::ItaloLiveRefreshStartRequest>();
+      this->set_msg_addr<messages::italo::ItaloLiveRefreshStartRequest>(req.get());
+      this->client_exchange<messages::italo::ItaloLiveRefreshStartAck>(req);
       m_live_refresh_in_progress = true;
       m_last_live_refresh_time = std::chrono::steady_clock::now();
     }
@@ -405,21 +405,21 @@ namespace trezor {
 
       m_last_live_refresh_time = std::chrono::steady_clock::now();
 
-      auto req = std::make_shared<messages::monero::MoneroLiveRefreshStepRequest>();
+      auto req = std::make_shared<messages::italo::ItaloLiveRefreshStepRequest>();
       req->set_out_key(out_key.data, 32);
       req->set_recv_deriv(recv_derivation.data, 32);
       req->set_real_out_idx(real_output_index);
       req->set_sub_addr_major(received_index.major);
       req->set_sub_addr_minor(received_index.minor);
 
-      auto ack = this->client_exchange<messages::monero::MoneroLiveRefreshStepAck>(req);
+      auto ack = this->client_exchange<messages::italo::ItaloLiveRefreshStepAck>(req);
       protocol::ki::live_refresh_ack(view_key_priv, out_key, ack, in_ephemeral, ki);
     }
 
     void device_trezor::live_refresh_finish_unsafe()
     {
-      auto req = std::make_shared<messages::monero::MoneroLiveRefreshFinalRequest>();
-      this->client_exchange<messages::monero::MoneroLiveRefreshFinalAck>(req);
+      auto req = std::make_shared<messages::italo::ItaloLiveRefreshFinalRequest>();
+      this->client_exchange<messages::italo::ItaloLiveRefreshFinalAck>(req);
       m_live_refresh_in_progress = false;
     }
 
@@ -618,7 +618,7 @@ namespace trezor {
 =======
       for(size_t cur_src = 0; cur_src < num_sources; ++cur_src){
         auto src = signer->step_set_vini_input(cur_src);
-        auto ack = this->client_exchange<messages::monero::MoneroTransactionInputViniAck>(src);
+        auto ack = this->client_exchange<messages::italo::ItaloTransactionInputViniAck>(src);
         signer->step_set_vini_input_ack(ack);
         EVENT_PROGRESS(4, cur_src, num_sources);
 >>>>>>> e4b049da05faeb7e1922d01aeebafa5f696c17d1
@@ -639,7 +639,7 @@ namespace trezor {
         // If BP is offloaded to host, another step with computed BP may be needed.
         auto offloaded_bp = signer->step_rsig(cur_dst);
         if (offloaded_bp){
-          auto bp_ack = this->client_exchange<messages::monero::MoneroTransactionSetOutputAck>(offloaded_bp);
+          auto bp_ack = this->client_exchange<messages::italo::ItaloTransactionSetOutputAck>(offloaded_bp);
           signer->step_set_rsig_ack(ack);
         }
 
@@ -692,7 +692,7 @@ namespace trezor {
       }
     }
 
-    void device_trezor::transaction_pre_check(std::shared_ptr<messages::monero::MoneroTransactionInitRequest> init_msg)
+    void device_trezor::transaction_pre_check(std::shared_ptr<messages::italo::ItaloTransactionInitRequest> init_msg)
     {
       CHECK_AND_ASSERT_THROW_MES(init_msg, "TransactionInitRequest is empty");
       CHECK_AND_ASSERT_THROW_MES(init_msg->has_tsx_data(), "TransactionInitRequest has no transaction data");

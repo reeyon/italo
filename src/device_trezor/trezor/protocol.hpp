@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018, The Monero Project
+// Copyright (c) 2017-2018, The Italo Project
 //
 // All rights reserved.
 //
@@ -137,7 +137,7 @@ namespace ki {
    */
   void live_refresh_ack(const ::crypto::secret_key & view_key_priv,
                         const ::crypto::public_key& out_key,
-                        const std::shared_ptr<messages::monero::MoneroLiveRefreshStepAck> & ack,
+                        const std::shared_ptr<messages::italo::ItaloLiveRefreshStepAck> & ack,
                         ::cryptonote::keypair& in_ephemeral,
                         ::crypto::key_image& ki);
 }
@@ -229,7 +229,7 @@ namespace tx {
     void extract_payment_id();
     void compute_integrated_indices(TsxData * tsx_data);
     bool should_compute_bp_now() const;
-    void compute_bproof(messages::monero::MoneroTransactionRsigData & rsig_data);
+    void compute_bproof(messages::italo::ItaloTransactionRsigData & rsig_data);
     void process_bproof(rct::Bulletproof & bproof);
 
   public:
@@ -312,14 +312,14 @@ namespace tx {
   // TX Key decryption
   void load_tx_key_data(hw::device_cold::tx_key_data_t & res, const std::string & data);
 
-  std::shared_ptr<messages::monero::MoneroGetTxKeyRequest> get_tx_key(
+  std::shared_ptr<messages::italo::ItaloGetTxKeyRequest> get_tx_key(
       const hw::device_cold::tx_key_data_t & tx_data);
 
   void get_tx_key_ack(
       std::vector<::crypto::secret_key> & tx_keys,
       const std::string & tx_prefix_hash,
       const ::crypto::secret_key & view_key_priv,
-      std::shared_ptr<const messages::monero::MoneroGetTxKeyAck> ack
+      std::shared_ptr<const messages::italo::ItaloGetTxKeyAck> ack
   );
 }
 

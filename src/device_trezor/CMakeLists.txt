@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2017, The Monero Project
+# Copyright (c) 2014-2017, The Italo Project
 #
 # All rights reserved.
 #
@@ -73,7 +73,7 @@ if(DEVICE_TREZOR_READY)
         message(STATUS "Trezor debugging enabled")
     endif()
 
-    monero_private_headers(device_trezor
+    italo_private_headers(device_trezor
             ${device_private_headers})
 
     italo_add_library(device_trezor

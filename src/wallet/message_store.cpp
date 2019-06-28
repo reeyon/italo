@@ -207,7 +207,7 @@ void message_store::unpack_signer_config(const multisig_wallet_state &state, con
 void message_store::process_signer_config(const multisig_wallet_state &state, const std::string &signer_config)
 {
   // The signers in "signer_config" and the resident wallet signers are matched not by label, but
-  // by Monero address, and ALL labels will be set from "signer_config", even the "me" label.
+  // by Italo address, and ALL labels will be set from "signer_config", even the "me" label.
   // In the auto-config process as implemented now the auto-config manager is responsible for defining
   // the labels, and right at the end of the process ALL wallets use the SAME labels. The idea behind this
   // is preventing problems like duplicate labels and confusion (Bob choosing a label "IamAliceHonest").
@@ -414,7 +414,7 @@ void message_store::stop_auto_config()
 void message_store::setup_signer_for_auto_config(uint32_t index, const std::string token, bool receiving)
 {
   // It may be a little strange to hash the textual hex digits of the auto config token into
-  // 32 bytes and turn that into a Monero public/secret key pair, instead of doing something
+  // 32 bytes and turn that into a Italo public/secret key pair, instead of doing something
   // much less complicated like directly using the underlying random 40 bits as key for a
   // symmetric cipher, but everything is there already for encrypting and decrypting messages
   // with such key pairs, and furthermore it would be trivial to use tokens with a different
@@ -1217,7 +1217,7 @@ void message_store::send_message(const multisig_wallet_state &state, uint32_t id
     // transport address likewise derived from that token
     public_key = me.auto_config_public_key;
     dm.destination_transport_address = me.auto_config_transport_address;
-    // The destination Monero address is not yet known
+    // The destination Italo address is not yet known
     memset(&dm.destination_italo_address, 0, sizeof(cryptonote::account_public_address));
   }
   else

@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018, The Monero Project
+// Copyright (c) 2017-2018, The Italo Project
 //
 // All rights reserved.
 //
@@ -68,7 +68,7 @@ namespace trezor {
       size_t m_num_transations_to_sign;
 
       void transaction_versions_check(const ::tools::wallet2::unsigned_tx_set & unsigned_tx, hw::tx_aux_data & aux_data);
-      void transaction_pre_check(std::shared_ptr<messages::monero::MoneroTransactionInitRequest> init_msg);
+      void transaction_pre_check(std::shared_ptr<messages::italo::ItaloTransactionInitRequest> init_msg);
       void transaction_check(const protocol::tx::TData & tdata, const hw::tx_aux_data & aux_data);
       void device_state_reset_unsafe() override;
       void live_refresh_start_unsafe();
