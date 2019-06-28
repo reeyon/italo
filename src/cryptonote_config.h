@@ -193,8 +193,8 @@ namespace config
   std::string const GENESIS_TX = "013c01ff0001ffffffffffff01029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd0880712101c08642bd56d340f281cd11c95ba7fc9714e61e9826e4ce0b7bc2107de13e640e";
   uint32_t const GENESIS_NONCE = 10000;
 
-  std::string const DEVELOPMENT_WALLET_ADDRESS = "BCBrDxKu8FKNq9JXD3jqgd98FFRrLqMWJUmQ14mq7aDPTzjPQ1aTNBo5CfBqTKsnArdDTi1sbd64kgX3rg6RCdGu5HnRLWS";
-  std::string const MARKETING_WALLET_ADDRESS = "bxdEc4zm1g2ZQZkSwjYThuMJouTSfzL2xJXTC2o4q7Dq17sEcsMdwgRfNuBgg59TPCLJwCj4jJH7rT8bdKjx5p6Z35LJDknWU";
+  std::string const DEVELOPMENT_WALLET_ADDRESS = "ipPDqeQSKdthMh8qf8NcMEgcGkajJpc8yeWuygqZT2ovfBcJUQJYs3xN6pVPFLn7vtH9cpfQhfP7oj1cSvkMdjU91ra8WaiZh";
+  std::string const MARKETING_WALLET_ADDRESS = "ipNXs6rBgB8NrnWgwtqtaicP2EJMoWMhvBFjdrWtW6VDG9LdcNdQgSUNCytQm1uhLTh5vSZBcoAfVBGkheej3c2Z2kzEceDLJ";
   namespace testnet
   {
     uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 253;
@@ -210,8 +210,8 @@ namespace config
     std::string const GENESIS_TX = "013c01ff0001ffffffffffff01029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121018e3af54bedc44902896721b7dcc1b7b277ceb135027569ec92b9e47563780904";
     uint32_t const GENESIS_NONCE = 10001;
 
-    std::string const DEVELOPMENT_WALLET_ADDRESS = "BCBrDxKu8FKNq9JXD3jqgd98FFRrLqMWJUmQ14mq7aDPTzjPQ1aTNBo5CfBqTKsnArdDTi1sbd64kgX3rg6RCdGu5HnRLWS";
-    std::string const MARKETING_WALLET_ADDRESS = "bxdEc4zm1g2ZQZkSwjYThuMJouTSfzL2xJXTC2o4q7Dq17sEcsMdwgRfNuBgg59TPCLJwCj4jJH7rT8bdKjx5p6Z35LJDknWU";
+    std::string const DEVELOPMENT_WALLET_ADDRESS = "ipPDqeQSKdthMh8qf8NcMEgcGkajJpc8yeWuygqZT2ovfBcJUQJYs3xN6pVPFLn7vtH9cpfQhfP7oj1cSvkMdjU91ra8WaiZh";
+    std::string const MARKETING_WALLET_ADDRESS = "ipNXs6rBgB8NrnWgwtqtaicP2EJMoWMhvBFjdrWtW6VDG9LdcNdQgSUNCytQm1uhLTh5vSZBcoAfVBGkheej3c2Z2kzEceDLJ";
   }
 
 namespace stagenet
@@ -228,8 +228,8 @@ namespace stagenet
     std::string const GENESIS_TX = "010a01ff0001ffffffffffff01029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121019d76807e28b01cbfec6f8f89b781735ffd8309bbc09f41191808a89507c49cb2";
     uint32_t const GENESIS_NONCE = 10002;
 
-    std::string const DEVELOPMENT_WALLET_ADDRESS = "BCBrDxKu8FKNq9JXD3jqgd98FFRrLqMWJUmQ14mq7aDPTzjPQ1aTNBo5CfBqTKsnArdDTi1sbd64kgX3rg6RCdGu5HnRLWS";
-    std::string const MARKETING_WALLET_ADDRESS = "bxdEc4zm1g2ZQZkSwjYThuMJouTSfzL2xJXTC2o4q7Dq17sEcsMdwgRfNuBgg59TPCLJwCj4jJH7rT8bdKjx5p6Z35LJDknWU";
+    std::string const DEVELOPMENT_WALLET_ADDRESS = "ipPDqeQSKdthMh8qf8NcMEgcGkajJpc8yeWuygqZT2ovfBcJUQJYs3xN6pVPFLn7vtH9cpfQhfP7oj1cSvkMdjU91ra8WaiZh";
+    std::string const MARKETING_WALLET_ADDRESS = "ipNXs6rBgB8NrnWgwtqtaicP2EJMoWMhvBFjdrWtW6VDG9LdcNdQgSUNCytQm1uhLTh5vSZBcoAfVBGkheej3c2Z2kzEceDLJ";
   }
 }
 namespace cryptonote
