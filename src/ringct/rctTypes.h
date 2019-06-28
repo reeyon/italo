@@ -257,7 +257,7 @@ namespace rct {
         {
           FIELD(type)
           if (type == RCTTypeNull)
-            return true;
+            return ar.stream().good();
           if (type != RCTTypeFull && type != RCTTypeFullBulletproof && type != RCTTypeSimple && type != RCTTypeSimpleBulletproof && type != RCTTypeBulletproof && type != RCTTypeBulletproof2)
             return false;
           VARINT_FIELD(txnFee)
@@ -317,7 +317,7 @@ namespace rct {
               ar.delimit_array();
           }
           ar.end_array();
-          return true;
+          return ar.stream().good();
         }
     };
     struct rctSigPrunable {
@@ -330,7 +330,7 @@ namespace rct {
         bool serialize_rctsig_prunable(Archive<W> &ar, uint8_t type, size_t inputs, size_t outputs, size_t mixin)
         {
           if (type == RCTTypeNull)
-            return true;
+            return ar.stream().good();
           if (type != RCTTypeFull && type != RCTTypeFullBulletproof && type != RCTTypeSimple && type != RCTTypeSimpleBulletproof && type != RCTTypeBulletproof && type != RCTTypeBulletproof2)
             return false;
           if (type == RCTTypeSimpleBulletproof || type == RCTTypeFullBulletproof)
@@ -449,7 +449,7 @@ namespace rct {
             }
             ar.end_array();
           }
-          return true;
+          return ar.stream().good();
         }
 
     };

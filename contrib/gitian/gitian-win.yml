@@ -1,5 +1,5 @@
 ---
-name: "italo-win-0.14"
+name: "monero-win-0.14"
 enable_cache: true
 suites:
 - "bionic"
@@ -23,8 +23,8 @@ packages:
 - "rename"
 - "cmake"
 remotes:
-- "url": "https://github.com/italocoin-project/italo.git"
-  "dir": "italo"
+- "url": "https://github.com/monero-project/monero.git"
+  "dir": "monero"
 files: []
 script: |
   WRAP_DIR=$HOME/wrapped
@@ -100,7 +100,8 @@ script: |
   create_per-host_linker_wrapper "2000-01-01 12:00:00"
   export PATH=${WRAP_DIR}:${PATH}
 
-  cd italo
+  git config --global core.abbrev 9
+  cd monero
   BASEPREFIX=`pwd`/contrib/depends
   # Build dependencies for each host
   for i in $HOSTS; do
@@ -125,8 +126,8 @@ script: |
     export PATH=${BASEPREFIX}/${i}/native/bin:${ORIGPATH}
     mkdir build && cd build
     cmake .. -DCMAKE_TOOLCHAIN_FILE=${BASEPREFIX}/${i}/share/toolchain.cmake
-    make
-    DISTNAME=italo-${i}
+    make ${MAKEOPTS}
+    DISTNAME=monero-${i}
     mv bin ${DISTNAME}
     find ${DISTNAME}/ | sort | zip -X@ ${OUTDIR}/${DISTNAME}.zip
     cd .. && rm -rf build

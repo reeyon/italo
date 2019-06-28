@@ -1,5 +1,5 @@
 ---
-name: "italo-osx-0.14"
+name: "monero-osx-0.14"
 enable_cache: true
 suites:
 - "bionic"
@@ -24,8 +24,8 @@ packages:
 - "python-dev"
 - "python-setuptools"
 remotes:
-- "url": "https://github.com/italocoin-project/italo.git"
-  "dir": "italo"
+- "url": "https://github.com/monero-project/monero.git"
+  "dir": "monero"
 files:
 - "MacOSX10.11.sdk.tar.gz"
 script: |
@@ -77,7 +77,8 @@ script: |
   create_per-host_faketime_wrappers "2000-01-01 12:00:00"
   export PATH=${WRAP_DIR}:${PATH}
 
-  cd italo
+  git config --global core.abbrev 9
+  cd monero
   BASEPREFIX=`pwd`/contrib/depends
 
   mkdir -p ${BASEPREFIX}/SDKs
@@ -100,8 +101,8 @@ script: |
     export PATH=${BASEPREFIX}/${i}/native/bin:${ORIGPATH}
     mkdir build && cd build
     cmake .. -DCMAKE_TOOLCHAIN_FILE=${BASEPREFIX}/${i}/share/toolchain.cmake
-    make
-    DISTNAME=italo-${i}
+    make ${MAKEOPTS}
+    DISTNAME=monero-${i}
     mv bin ${DISTNAME}
     find ${DISTNAME}/ | sort | tar --no-recursion --mode='u+rw,go+r-w,a+X' --owner=0 --group=0 -c -T - | gzip -9n > ${OUTDIR}/${DISTNAME}.tar.gz
     cd ..
