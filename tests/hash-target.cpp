@@ -32,7 +32,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <limits>
-#include "misc_log_ex.h"
 #include "crypto/hash.h"
 #include "cryptonote_basic/difficulty.h"
 
@@ -40,7 +39,6 @@ using namespace std;
 using cryptonote::check_hash;
 
 int main(int argc, char *argv[]) {
-  TRY_ENTRY();
   crypto::hash h;
   for (uint64_t diff = 1;; diff += 1 + (diff >> 8)) {
     for (uint16_t b = 0; b < 256; b++) {
@@ -85,5 +83,4 @@ int main(int argc, char *argv[]) {
     }
   }
   return 0;
-  CATCH_ENTRY_L0("main", 1);
 }
