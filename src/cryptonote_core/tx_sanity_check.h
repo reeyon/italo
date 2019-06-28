@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italo Project
+// Copyright (c) 2019, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -25,65 +25,12 @@
 // INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
-// Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#include <cstdint>
-#include <cstdlib>
-#include <cstring>
-#include <limits>
-#include "misc_log_ex.h"
-#include "crypto/hash.h"
-#include "cryptonote_basic/difficulty.h"
+#include "cryptonote_basic/blobdatatype.h"
 
-using namespace std;
-using cryptonote::check_hash;
+namespace cryptonote
+{
+  class Blockchain;
 
-int main(int argc, char *argv[]) {
-  TRY_ENTRY();
-  crypto::hash h;
-  for (uint64_t diff = 1;; diff += 1 + (diff >> 8)) {
-    for (uint16_t b = 0; b < 256; b++) {
-      memset(&h, b, sizeof(crypto::hash));
-      if (check_hash(h, diff) != (b == 0 || diff <= 255 / b)) {
-        return 1;
-      }
-      if (b > 0) {
-        memset(&h, 0, sizeof(crypto::hash));
-        ((char *) &h)[31] = b;
-        if (check_hash(h, diff) != (diff <= 255 / b)) {
-          return 1;
-        }
-      }
-    }
-    if (diff < numeric_limits<uint64_t>::max() / 256) {
-      uint64_t val = 0;
-      for (int i = 31; i >= 0; i--) {
-        val = val * 256 + 255;
-        ((char *) &h)[i] = static_cast<char>(val / diff);
-        val %= diff;
-      }
-      if (check_hash(h, diff) != true) {
-        return 1;
-      }
-      if (diff > 1) {
-        for (int i = 0;; i++) {
-          if (i >= 32) {
-            abort();
-          }
-          if (++((char *) &h)[i] != 0) {
-            break;
-          }
-        }
-        if (check_hash(h, diff) != false) {
-          return 1;
-        }
-      }
-    }
-    if (diff + 1 + (diff >> 8) < diff) {
-      break;
-    }
-  }
-  return 0;
-  CATCH_ENTRY_L0("main", 1);
+  bool tx_sanity_check(Blockchain &blockchain, const cryptonote::blobdata &tx_blob);
 }

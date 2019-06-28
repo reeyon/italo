@@ -41,6 +41,7 @@ using namespace epee;
 #include "cryptonote_basic/cryptonote_format_utils.h"
 #include "cryptonote_basic/account.h"
 #include "cryptonote_basic/cryptonote_basic_impl.h"
+#include "cryptonote_core/tx_sanity_check.h"
 #include "misc_language.h"
 #include "net/parse.h"
 #include "storages/http_abstract_invoke.h"
@@ -84,7 +85,7 @@ namespace cryptonote
     command_line::add_arg(desc, arg_rpc_ssl);
     command_line::add_arg(desc, arg_rpc_ssl_private_key);
     command_line::add_arg(desc, arg_rpc_ssl_certificate);
-    command_line::add_arg(desc, arg_rpc_ssl_allowed_certificates);
+    command_line::add_arg(desc, arg_rpc_ssl_ca_certificates);
     command_line::add_arg(desc, arg_rpc_ssl_allowed_fingerprints);
     command_line::add_arg(desc, arg_rpc_ssl_allow_any_cert);
     command_line::add_arg(desc, arg_bootstrap_daemon_address);
@@ -142,36 +143,38 @@ namespace cryptonote
     if (rpc_config->login)
       http_login.emplace(std::move(rpc_config->login->username), std::move(rpc_config->login->password).password());
 
-    epee::net_utils::ssl_support_t ssl_support;
-    const std::string ssl = command_line::get_arg(vm, arg_rpc_ssl);
-    if (!epee::net_utils::ssl_support_from_string(ssl_support, ssl))
+    epee::net_utils::ssl_options_t ssl_options = epee::net_utils::ssl_support_t::e_ssl_support_autodetect;
+    if (command_line::get_arg(vm, arg_rpc_ssl_allow_any_cert))
+      ssl_options.verification = epee::net_utils::ssl_verification_t::none;
+    else
     {
-      MFATAL("Invalid RPC SSL support: " << ssl);
-      return false;
+      std::string ssl_ca_path = command_line::get_arg(vm, arg_rpc_ssl_ca_certificates);
+      const std::vector<std::string> ssl_allowed_fingerprint_strings = command_line::get_arg(vm, arg_rpc_ssl_allowed_fingerprints);
+      std::vector<std::vector<uint8_t>> ssl_allowed_fingerprints{ ssl_allowed_fingerprint_strings.size() };
+      std::transform(ssl_allowed_fingerprint_strings.begin(), ssl_allowed_fingerprint_strings.end(), ssl_allowed_fingerprints.begin(), epee::from_hex::vector);
+
+      if (!ssl_ca_path.empty() || !ssl_allowed_fingerprints.empty())
+        ssl_options = epee::net_utils::ssl_options_t{std::move(ssl_allowed_fingerprints), std::move(ssl_ca_path)};
     }
-    const std::string ssl_private_key = command_line::get_arg(vm, arg_rpc_ssl_private_key);
-    const std::string ssl_certificate = command_line::get_arg(vm, arg_rpc_ssl_certificate);
-    const std::vector<std::string> ssl_allowed_certificate_paths = command_line::get_arg(vm, arg_rpc_ssl_allowed_certificates);
-    std::list<std::string> ssl_allowed_certificates;
-    for (const std::string &path: ssl_allowed_certificate_paths)
+
+    ssl_options.auth = epee::net_utils::ssl_authentication_t{
+      command_line::get_arg(vm, arg_rpc_ssl_private_key), command_line::get_arg(vm, arg_rpc_ssl_certificate)
+    };
+
+    // user specified CA file or fingeprints implies enabled SSL by default
+    if (ssl_options.verification != epee::net_utils::ssl_verification_t::user_certificates || !command_line::is_arg_defaulted(vm, arg_rpc_ssl))
     {
-      ssl_allowed_certificates.push_back({});
-      if (!epee::file_io_utils::load_file_to_string(path, ssl_allowed_certificates.back()))
+      const std::string ssl = command_line::get_arg(vm, arg_rpc_ssl);
+      if (!epee::net_utils::ssl_support_from_string(ssl_options.support, ssl))
       {
-        MERROR("Failed to load certificate: " << path);
-        ssl_allowed_certificates.back() = std::string();
+        MFATAL("Invalid RPC SSL support: " << ssl);
+        return false;
       }
     }
 
-    const std::vector<std::string> ssl_allowed_fingerprint_strings = command_line::get_arg(vm, arg_rpc_ssl_allowed_fingerprints);
-    std::vector<std::vector<uint8_t>> ssl_allowed_fingerprints{ ssl_allowed_fingerprint_strings.size() };
-    std::transform(ssl_allowed_fingerprint_strings.begin(), ssl_allowed_fingerprint_strings.end(), ssl_allowed_fingerprints.begin(), epee::from_hex::vector);
-    const bool ssl_allow_any_cert = command_line::get_arg(vm, arg_rpc_ssl_allow_any_cert);
-
     auto rng = [](size_t len, uint8_t *ptr){ return crypto::rand(len, ptr); };
     return epee::http_server_impl_base<core_rpc_server, connection_context>::init(
-      rng, std::move(port), std::move(rpc_config->bind_ip), std::move(rpc_config->access_control_origins), std::move(http_login),
-      ssl_support, std::make_pair(ssl_private_key, ssl_certificate), std::move(ssl_allowed_certificates), std::move(ssl_allowed_fingerprints), ssl_allow_any_cert
+      rng, std::move(port), std::move(rpc_config->bind_ip), std::move(rpc_config->access_control_origins), std::move(http_login), std::move(ssl_options)
     );
   }
   //------------------------------------------------------------------------------------------------------------------------------
@@ -193,7 +196,10 @@ namespace cryptonote
     if (use_bootstrap_daemon_if_necessary<COMMAND_RPC_GET_HEIGHT>(invoke_http_mode::JON, "/getheight", req, res, r))
       return r;
 
-    res.height = m_core.get_current_blockchain_height();
+    crypto::hash hash;
+    m_core.get_blockchain_top(res.height, hash);
+    ++res.height; // block height to chain height
+    res.hash = string_tools::pod_to_hex(hash);
     res.status = CORE_RPC_STATUS_OK;
     return true;
   }
@@ -239,7 +245,6 @@ namespace cryptonote
     res.cumulative_difficulty = m_core.get_blockchain_storage().get_db().get_block_cumulative_difficulty(res.height - 1);
     res.block_size_limit = res.block_weight_limit = m_core.get_blockchain_storage().get_current_cumulative_block_weight_limit();
     res.block_size_median = res.block_weight_median = m_core.get_blockchain_storage().get_current_cumulative_block_weight_median();
-    res.status = CORE_RPC_STATUS_OK;
     res.start_time = restricted ? 0 : (uint64_t)m_core.get_start_time();
     res.free_space = restricted ? std::numeric_limits<uint64_t>::max() : m_core.get_free_space();
     res.offline = m_core.offline();
@@ -257,6 +262,8 @@ namespace cryptonote
       res.database_size = round_up(res.database_size, 5ull* 1024 * 1024 * 1024);
     res.update_available = restricted ? false : m_core.is_update_available();
     res.version = restricted ? "" : MONERO_VERSION;
+
+    res.status = CORE_RPC_STATUS_OK;
     return true;
   }
   //------------------------------------------------------------------------------------------------------------------------------
@@ -418,17 +425,12 @@ namespace cryptonote
     if (use_bootstrap_daemon_if_necessary<COMMAND_RPC_GET_HASHES_FAST>(invoke_http_mode::BIN, "/gethashes.bin", req, res, r))
       return r;
 
-    NOTIFY_RESPONSE_CHAIN_ENTRY::request resp;
-
-    resp.start_height = req.start_height;
-    if(!m_core.find_blockchain_supplement(req.block_ids, resp))
+    res.start_height = req.start_height;
+    if(!m_core.get_blockchain_storage().find_blockchain_supplement(req.block_ids, res.m_block_ids, res.start_height, res.current_height, false))
     {
       res.status = "Failed";
       return false;
     }
-    res.current_height = resp.total_height;
-    res.start_height = resp.start_height;
-    res.m_block_ids = std::move(resp.m_block_ids);
 
     res.status = CORE_RPC_STATUS_OK;
     return true;
@@ -483,6 +485,7 @@ namespace cryptonote
 
     cryptonote::COMMAND_RPC_GET_OUTPUTS_BIN::request req_bin;
     req_bin.outputs = req.outputs;
+    req_bin.get_txid = req.get_txid;
     cryptonote::COMMAND_RPC_GET_OUTPUTS_BIN::response res_bin;
     if(!m_core.get_outs(req_bin, res_bin))
     {
@@ -559,7 +562,7 @@ namespace cryptonote
     // try the pool for any missing txes
     size_t found_in_pool = 0;
     std::unordered_set<crypto::hash> pool_tx_hashes;
-    std::unordered_map<crypto::hash, bool> double_spend_seen;
+    std::unordered_map<crypto::hash, tx_info> per_tx_pool_tx_info;
     if (!missed_txs.empty())
     {
       std::vector<tx_info> pool_tx_info;
@@ -614,7 +617,7 @@ namespace cryptonote
             {
               if (ti.id_hash == hash_string)
               {
-                double_spend_seen.insert(std::make_pair(h, ti.double_spend_seen));
+                per_tx_pool_tx_info.insert(std::make_pair(h, ti));
                 break;
               }
             }
@@ -638,30 +641,61 @@ namespace cryptonote
       e.prunable_hash = epee::string_tools::pod_to_hex(std::get<2>(tx));
       if (req.split || req.prune || std::get<3>(tx).empty())
       {
+        // use splitted form with pruned and prunable (filled only when prune=false and the daemon has it), leaving as_hex as empty
         e.pruned_as_hex = string_tools::buff_to_hex_nodelimer(std::get<1>(tx));
         if (!req.prune)
           e.prunable_as_hex = string_tools::buff_to_hex_nodelimer(std::get<3>(tx));
-      }
-      else
-      {
-        cryptonote::blobdata tx_data;
-        if (req.prune)
-          tx_data = std::get<1>(tx);
-        else
-          tx_data = std::get<1>(tx) + std::get<3>(tx);
-        e.as_hex = string_tools::buff_to_hex_nodelimer(tx_data);
-        if (req.decode_as_json && !tx_data.empty())
+        if (req.decode_as_json)
         {
+          cryptonote::blobdata tx_data;
           cryptonote::transaction t;
-          if (cryptonote::parse_and_validate_tx_from_blob(tx_data, t))
+          if (req.prune || std::get<3>(tx).empty())
           {
-            if (req.prune)
+            // decode pruned tx to JSON
+            tx_data = std::get<1>(tx);
+            if (cryptonote::parse_and_validate_tx_base_from_blob(tx_data, t))
             {
               pruned_transaction pruned_tx{t};
               e.as_json = obj_to_json_str(pruned_tx);
             }
             else
+            {
+              res.status = "Failed to parse and validate pruned tx from blob";
+              return true;
+            }
+          }
+          else
+          {
+            // decode full tx to JSON
+            tx_data = std::get<1>(tx) + std::get<3>(tx);
+            if (cryptonote::parse_and_validate_tx_from_blob(tx_data, t))
+            {
               e.as_json = obj_to_json_str(t);
+            }
+            else
+            {
+              res.status = "Failed to parse and validate tx from blob";
+              return true;
+            }
+          }
+        }
+      }
+      else
+      {
+        // use non-splitted form, leaving pruned_as_hex and prunable_as_hex as empty
+        cryptonote::blobdata tx_data = std::get<1>(tx) + std::get<3>(tx);
+        e.as_hex = string_tools::buff_to_hex_nodelimer(tx_data);
+        if (req.decode_as_json)
+        {
+          cryptonote::transaction t;
+          if (cryptonote::parse_and_validate_tx_from_blob(tx_data, t))
+          {
+            e.as_json = obj_to_json_str(t);
+          }
+          else
+          {
+            res.status = "Failed to parse and validate tx from blob";
+            return true;
           }
         }
       }
@@ -669,14 +703,17 @@ namespace cryptonote
       if (e.in_pool)
       {
         e.block_height = e.block_timestamp = std::numeric_limits<uint64_t>::max();
-        if (double_spend_seen.find(tx_hash) != double_spend_seen.end())
+        auto it = per_tx_pool_tx_info.find(tx_hash);
+        if (it != per_tx_pool_tx_info.end())
         {
-          e.double_spend_seen = double_spend_seen[tx_hash];
+          e.double_spend_seen = it->second.double_spend_seen;
+          e.relayed = it->second.relayed;
         }
         else
         {
-          MERROR("Failed to determine double spend status for " << tx_hash);
+          MERROR("Failed to determine pool info for " << tx_hash);
           e.double_spend_seen = false;
+          e.relayed = false;
         }
       }
       else
@@ -684,6 +721,7 @@ namespace cryptonote
         e.block_height = m_core.get_blockchain_storage().get_db().get_tx_block_height(tx_hash);
         e.block_timestamp = m_core.get_blockchain_storage().get_db().get_block_timestamp(e.block_height);
         e.double_spend_seen = false;
+        e.relayed = false;
       }
 
       // fill up old style responses too, in case an old wallet asks
@@ -796,6 +834,14 @@ namespace cryptonote
     {
       LOG_PRINT_L0("[on_send_raw_tx]: Failed to parse tx from hexbuff: " << req.tx_as_hex);
       res.status = "Failed";
+      return true;
+    }
+
+    if (req.do_sanity_checks && !cryptonote::tx_sanity_check(m_core.get_blockchain_storage(), tx_blob))
+    {
+      res.status = "Failed";
+      res.reason = "Sanity check failed";
+      res.sanity_check_failed = true;
       return true;
     }
 
@@ -931,7 +977,7 @@ namespace cryptonote
     const miner& lMiner = m_core.get_miner();
     res.active = lMiner.is_mining();
     res.is_background_mining_enabled = lMiner.get_is_background_mining_enabled();
-    
+     
     res.block_target = m_core.get_blockchain_storage().get_current_hard_fork_version() < 2 ? DIFFICULTY_TARGET_V1 : DIFFICULTY_TARGET_V2;
     if ( lMiner.is_mining() ) {
       res.speed = lMiner.get_speed();
@@ -1237,7 +1283,10 @@ namespace cryptonote
       LOG_ERROR("Failed to find tx pub key in blockblob");
       return false;
     }
-    res.reserved_offset += sizeof(tx_pub_key) + 2; //2 bytes: tag for TX_EXTRA_NONCE(1 byte), counter in TX_EXTRA_NONCE(1 byte)
+    if (req.reserve_size)
+      res.reserved_offset += sizeof(tx_pub_key) + 2; //2 bytes: tag for TX_EXTRA_NONCE(1 byte), counter in TX_EXTRA_NONCE(1 byte)
+    else
+      res.reserved_offset = 0;
     if(res.reserved_offset + req.reserve_size > block_blob.size())
     {
       error_resp.code = CORE_RPC_ERROR_CODE_INTERNAL_ERROR;
@@ -1298,7 +1347,8 @@ namespace cryptonote
       return false;
     }
 
-    if(!m_core.handle_block_found(b))
+    block_verification_context bvc;
+    if(!m_core.handle_block_found(b, bvc))
     {
       error_resp.code = CORE_RPC_ERROR_CODE_BLOCK_NOT_ACCEPTED;
       error_resp.message = "Block not accepted";
@@ -1330,15 +1380,15 @@ namespace cryptonote
 
     template_req.reserve_size = 1;
     template_req.wallet_address = req.wallet_address;
+    template_req.prev_block = req.prev_block;
     submit_req.push_back(boost::value_initialized<std::string>());
     res.height = m_core.get_blockchain_storage().get_current_blockchain_height();
 
-    bool r;
-
     for(size_t i = 0; i < req.amount_of_blocks; i++)
     {
-      r = on_getblocktemplate(template_req, template_res, error_resp, ctx);
+      bool r = on_getblocktemplate(template_req, template_res, error_resp, ctx);
       res.status = template_res.status;
+      template_req.prev_block.clear();
       
       if (!r) return false;
 
@@ -1356,6 +1406,7 @@ namespace cryptonote
         error_resp.message = "Wrong block blob";
         return false;
       }
+      b.nonce = req.starting_nonce;
       miner::find_nonce_for_given_block(b, template_res.difficulty, template_res.height);
 
       submit_req.front() = string_tools::buff_to_hex_nodelimer(block_to_blob(b));
@@ -1364,6 +1415,8 @@ namespace cryptonote
 
       if (!r) return false;
 
+      res.blocks.push_back(epee::string_tools::pod_to_hex(get_block_hash(b)));
+      template_req.prev_block = res.blocks.back();
       res.height = template_res.height;
     }
 
@@ -1706,65 +1759,7 @@ namespace cryptonote
   //------------------------------------------------------------------------------------------------------------------------------
   bool core_rpc_server::on_get_info_json(const COMMAND_RPC_GET_INFO::request& req, COMMAND_RPC_GET_INFO::response& res, epee::json_rpc::error& error_resp, const connection_context *ctx)
   {
-    PERF_TIMER(on_get_info_json);
-    bool r;
-    if (use_bootstrap_daemon_if_necessary<COMMAND_RPC_GET_INFO>(invoke_http_mode::JON_RPC, "get_info", req, res, r))
-    {
-      res.bootstrap_daemon_address = m_bootstrap_daemon_address;
-      crypto::hash top_hash;
-      m_core.get_blockchain_top(res.height_without_bootstrap, top_hash);
-      ++res.height_without_bootstrap; // turn top block height into blockchain height
-      res.was_bootstrap_ever_used = true;
-      return r;
-    }
-
-    const bool restricted = m_restricted && ctx;
-
-    crypto::hash top_hash;
-    m_core.get_blockchain_top(res.height, top_hash);
-    ++res.height; // turn top block height into blockchain height
-    res.top_block_hash = string_tools::pod_to_hex(top_hash);
-    res.target_height = m_core.get_target_blockchain_height();
-    res.difficulty = m_core.get_blockchain_storage().get_difficulty_for_next_block();
-    res.target = m_core.get_blockchain_storage().get_current_hard_fork_version() < 2 ? DIFFICULTY_TARGET_V1 : DIFFICULTY_TARGET_V2;
-    res.tx_count = m_core.get_blockchain_storage().get_total_transactions() - res.height; //without coinbase
-    res.tx_pool_size = m_core.get_pool_transactions_count();
-    res.alt_blocks_count = restricted ? 0 : m_core.get_blockchain_storage().get_alternative_blocks_count();
-    uint64_t total_conn = restricted ? 0 : m_p2p.get_public_connections_count();
-    res.outgoing_connections_count = restricted ? 0 : m_p2p.get_public_outgoing_connections_count();
-    res.incoming_connections_count = restricted ? 0 : (total_conn - res.outgoing_connections_count);
-    res.rpc_connections_count = restricted ? 0 : get_connections_count();
-    res.white_peerlist_size = restricted ? 0 : m_p2p.get_public_white_peers_count();
-    res.grey_peerlist_size = restricted ? 0 : m_p2p.get_public_gray_peers_count();
-
-    cryptonote::network_type net_type = nettype();
-    res.mainnet = net_type == MAINNET;
-    res.testnet = net_type == TESTNET;
-    res.stagenet = net_type == STAGENET;
-    res.nettype = net_type == MAINNET ? "mainnet" : net_type == TESTNET ? "testnet" : net_type == STAGENET ? "stagenet" : "fakechain";
-
-    res.cumulative_difficulty = m_core.get_blockchain_storage().get_db().get_block_cumulative_difficulty(res.height - 1);
-    res.block_size_limit = res.block_weight_limit = m_core.get_blockchain_storage().get_current_cumulative_block_weight_limit();
-    res.block_size_median = res.block_weight_median = m_core.get_blockchain_storage().get_current_cumulative_block_weight_median();
-    res.status = CORE_RPC_STATUS_OK;
-    res.start_time = restricted ? 0 : (uint64_t)m_core.get_start_time();
-    res.free_space = restricted ? std::numeric_limits<uint64_t>::max() : m_core.get_free_space();
-    res.offline = m_core.offline();
-    res.bootstrap_daemon_address = restricted ? "" : m_bootstrap_daemon_address;
-    res.height_without_bootstrap = restricted ? 0 : res.height;
-    if (restricted)
-      res.was_bootstrap_ever_used = false;
-    else
-    {
-      boost::shared_lock<boost::shared_mutex> lock(m_bootstrap_daemon_mutex);
-      res.was_bootstrap_ever_used = m_was_bootstrap_ever_used;
-    }
-    res.database_size = m_core.get_blockchain_storage().get_db().get_database_size();
-    if (restricted)
-      res.database_size = round_up(res.database_size, 5ull * 1024 * 1024 * 1024);
-    res.update_available = restricted ? false : m_core.is_update_available();
-    res.version = restricted ? "" : MONERO_VERSION;
-    return true;
+    return on_get_info(req, res, ctx);
   }
   //------------------------------------------------------------------------------------------------------------------------------
   bool core_rpc_server::on_hard_fork_info(const COMMAND_RPC_HARD_FORK_INFO::request& req, COMMAND_RPC_HARD_FORK_INFO::response& res, epee::json_rpc::error& error_resp, const connection_context *ctx)
@@ -2362,6 +2357,7 @@ namespace cryptonote
         return false;
       }
       res.pruning_seed = m_core.get_blockchain_pruning_seed();
+      res.pruned = res.pruning_seed != 0;
     }
     catch (const std::exception &e)
     {
@@ -2420,9 +2416,9 @@ namespace cryptonote
     , ""
     };
 
-  const command_line::arg_descriptor<std::vector<std::string>> core_rpc_server::arg_rpc_ssl_allowed_certificates = {
-      "rpc-ssl-allowed-certificates"
-    , "List of paths to PEM format certificates of allowed peers (all allowed if empty)"
+  const command_line::arg_descriptor<std::string> core_rpc_server::arg_rpc_ssl_ca_certificates = {
+      "rpc-ssl-ca-certificates"
+    , "Path to file containing concatenated PEM format certificate(s) to replace system CA(s)."
     };
 
   const command_line::arg_descriptor<std::vector<std::string>> core_rpc_server::arg_rpc_ssl_allowed_fingerprints = {
@@ -2432,7 +2428,7 @@ namespace cryptonote
 
   const command_line::arg_descriptor<bool> core_rpc_server::arg_rpc_ssl_allow_any_cert = {
       "rpc-ssl-allow-any-cert"
-    , "Allow any peer certificate, rather than just those on the allowed list"
+    , "Allow any peer certificate"
     , false
     };
 

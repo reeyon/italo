@@ -310,11 +310,14 @@ public:
   virtual void batch_stop();
   virtual void batch_abort();
 
-  virtual void block_txn_start(bool readonly);
-  virtual void block_txn_stop();
-  virtual void block_txn_abort();
-  virtual bool block_rtxn_start(MDB_txn **mtxn, mdb_txn_cursors **mcur) const;
+  virtual void block_wtxn_start();
+  virtual void block_wtxn_stop();
+  virtual void block_wtxn_abort();
+  virtual bool block_rtxn_start() const;
   virtual void block_rtxn_stop() const;
+  virtual void block_rtxn_abort() const;
+
+  bool block_rtxn_start(MDB_txn **mtxn, mdb_txn_cursors **mcur) const;
 
   virtual void pop_block(block& blk, std::vector<transaction>& txs);
 
@@ -399,6 +402,9 @@ private:
   virtual uint64_t get_database_size() const;
 
   std::vector<uint64_t> get_block_info_64bit_fields(uint64_t start_height, size_t count, off_t offset) const;
+
+  uint64_t get_max_block_size();
+  void add_max_block_size(uint64_t sz);
 
   // fix up anything that may be wrong due to past bugs
   virtual void fixup();

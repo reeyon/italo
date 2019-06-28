@@ -29,6 +29,7 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import time
+import json
 
 """Test simple transfers
 """
@@ -38,10 +39,19 @@ from framework.wallet import Wallet
 
 class TransferTest():
     def run_test(self):
+        self.reset()
         self.create()
         self.mine()
         self.transfer()
         self.check_get_bulk_payments()
+        self.check_double_spend_detection()
+        self.sweep_single()
+
+    def reset(self):
+        print 'Resetting blockchain'
+        daemon = Daemon()
+        daemon.pop_blocks(1000)
+        daemon.flush_txpool()
 
     def create(self):
         print 'Creating wallets'
@@ -62,9 +72,14 @@ class TransferTest():
         print("Mining some blocks")
         daemon = Daemon()
 
+        res = daemon.get_info()
+        height = res.height
+
         daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 80)
         for i in range(len(self.wallet)):
             self.wallet[i].refresh()
+            res = self.wallet[i].get_height()
+            assert res.height == height + 80
 
     def transfer(self):
         daemon = Daemon()
@@ -168,6 +183,27 @@ class TransferTest():
         assert e.address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
         assert e.double_spend_seen == False
         assert e.confirmations == 1
+
+        res = self.wallet[0].get_height()
+        wallet_height = res.height
+        res = self.wallet[0].get_transfer_by_txid(txid)
+        assert len(res.transfers) == 1
+        assert res.transfers[0] == res.transfer
+        t = res.transfer
+        assert t.txid == txid
+        assert t.payment_id == payment_id
+        assert t.height == wallet_height - 1
+        assert t.timestamp > 0
+        assert t.amount == 0 # to self, so it's just "pay a fee" really
+        assert t.fee == fee
+        assert t.note == ''
+        assert len(t.destinations) == 1
+        assert t.destinations[0] == {'address': '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 'amount': 1000000000000}
+        assert t.type == 'out'
+        assert t.unlock_time == 0
+        assert t.address == '42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm'
+        assert t.double_spend_seen == False
+        assert t.confirmations == 1
 
         res = self.wallet[0].get_balance()
         assert res.balance == running_balances[0]
@@ -482,6 +518,114 @@ class TransferTest():
         assert len(res.payments) >= 1 # one tx was sent
         res = self.wallet[2].get_bulk_payments(payment_ids = ['1'*64, '1234500000012345abcde00000abcdeff1234500000012345abcde00000abcde', '2'*64])
         assert len(res.payments) >= 1 # one tx was sent
+
+    def check_double_spend_detection(self):
+        print('Checking double spend detection')
+        txes = [[None, None], [None, None]]
+        for i in range(2):
+            self.wallet[0].restore_deterministic_wallet(seed = 'velvet lymph giddy number token physics poetry unquoted nibs useful sabotage limits benches lifestyle eden nitrogen anvil fewest avoid batch vials washing fences goat unquoted')
+            self.wallet[0].refresh()
+            res = self.wallet[0].get_balance()
+            unlocked_balance = res.unlocked_balance
+            res = self.wallet[0].sweep_all(address = '44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW', do_not_relay = True, get_tx_hex = True)
+            assert len(res.tx_hash_list) == 1
+            assert len(res.tx_hash_list[0]) == 32*2
+            txes[i][0] = res.tx_hash_list[0]
+            assert len(res.fee_list) == 1
+            assert res.fee_list[0] > 0
+            assert len(res.amount_list) == 1
+            assert res.amount_list[0] == unlocked_balance - res.fee_list[0]
+            assert len(res.tx_blob_list) > 0
+            assert len(res.tx_blob_list[0]) > 0
+            assert not 'tx_metadata_list' in res or len(res.tx_metadata_list) == 0
+            assert not 'multisig_txset' in res or len(res.multisig_txset) == 0
+            assert not 'unsigned_txset' in res or len(res.unsigned_txset) == 0
+            assert len(res.tx_blob_list) == 1
+            txes[i][1] = res.tx_blob_list[0]
+
+        daemon = Daemon()
+        res = daemon.send_raw_transaction(txes[0][1])
+        assert res.not_relayed == False
+        assert res.low_mixin == False
+        assert res.double_spend == False
+        assert res.invalid_input == False
+        assert res.invalid_output == False
+        assert res.too_big == False
+        assert res.overspend == False
+        assert res.fee_too_low == False
+        assert res.not_rct == False
+
+        res = daemon.get_transactions([txes[0][0]])
+        assert len(res.txs) >= 1
+        tx = [tx for tx in res.txs if tx.tx_hash == txes[0][0]][0]
+        assert tx.in_pool
+        assert not tx.double_spend_seen
+
+        res = daemon.send_raw_transaction(txes[1][1])
+        assert res.not_relayed == False
+        assert res.low_mixin == False
+        assert res.double_spend == True
+        assert res.invalid_input == False
+        assert res.invalid_output == False
+        assert res.too_big == False
+        assert res.overspend == False
+        assert res.fee_too_low == False
+        assert res.not_rct == False
+
+        res = daemon.get_transactions([txes[0][0]])
+        assert len(res.txs) >= 1
+        tx = [tx for tx in res.txs if tx.tx_hash == txes[0][0]][0]
+        assert tx.in_pool
+        assert tx.double_spend_seen
+
+    def sweep_single(self):
+        daemon = Daemon()
+
+        print("Sending single output")
+
+        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 1)
+        self.wallet[0].refresh()
+        res = self.wallet[0].incoming_transfers(transfer_type = 'available')
+        for t in res.transfers:
+            assert not t.spent
+        assert len(res.transfers) > 8 # we mined a lot
+        index = 8
+        assert not res.transfers[index].spent
+        assert res.transfers[index].amount > 0
+        ki = res.transfers[index].key_image
+        amount = res.transfers[index].amount
+        daemon.generateblocks('42ey1afDFnn4886T7196doS9GPMzexD9gXpsZJDwVjeRVdFCSoHnv7KPbBeGpzJBzHRCAs9UxqeoyFQMYbqSWYTfJJQAWDm', 10) # ensure unlocked
+        self.wallet[0].refresh()
+        res = self.wallet[0].get_balance()
+        balance = res.balance
+        res = self.wallet[0].incoming_transfers(transfer_type = 'all')
+        res = self.wallet[0].sweep_single('44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW', key_image = ki)
+        assert len(res.tx_hash) == 64
+        tx_hash = res.tx_hash
+        daemon.generateblocks('44Kbx4sJ7JDRDV5aAhLJzQCjDz2ViLRduE3ijDZu3osWKBjMGkV1XPk4pfDUMqt1Aiezvephdqm6YD19GKFD9ZcXVUTp6BW', 1)
+        self.wallet[0].refresh()
+        res = self.wallet[0].get_balance()
+        new_balance = res.balance
+        res = daemon.get_transactions([tx_hash], decode_as_json = True)
+        assert len(res.txs) == 1
+        tx = res.txs[0]
+        assert tx.tx_hash == tx_hash
+        assert not tx.in_pool
+        assert len(tx.as_json) > 0
+        try:
+            j = json.loads(tx.as_json)
+        except:
+            j = None
+        assert j
+        assert new_balance == balance - amount
+        assert len(j['vin']) == 1
+        assert j['vin'][0]['key']['k_image'] == ki
+        self.wallet[0].refresh()
+        res = self.wallet[0].incoming_transfers(transfer_type = 'available')
+        assert len([t for t in res.transfers if t.key_image == ki]) == 0
+        res = self.wallet[0].incoming_transfers(transfer_type = 'unavailable')
+        assert len([t for t in res.transfers if t.key_image == ki]) == 1
+
 
 if __name__ == '__main__':
     TransferTest().run_test()

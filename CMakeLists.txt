@@ -878,6 +878,7 @@ set(OLD_LIB_SUFFIXES ${CMAKE_FIND_LIBRARY_SUFFIXES})
 if(STATIC)
   if(MINGW)
     set(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+    set(Boost_NO_BOOST_CMAKE ON)
   endif()
 
   set(Boost_USE_STATIC_LIBS ON)
@@ -1028,3 +1029,5 @@ option(INSTALL_VENDORED_LIBUNBOUND "Install libunbound binary built from source 
 
 
 CHECK_C_COMPILER_FLAG(-std=c11 HAVE_C11)
+
+find_package(PythonInterp)
