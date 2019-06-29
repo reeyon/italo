@@ -146,7 +146,7 @@ namespace cryptonote
       if (!base_only)
       {
         const bool bulletproof = rct::is_rct_bulletproof(rv.type);
-        if (bulletproof && rv.type == rct::RCTTypeBulletproof)
+        if ((bulletproof && rv.type == rct::RCTTypeBulletproof) || (bulletproof && rv.type == rct::RCTTypeBulletproof2))
         {
           if (rv.p.bulletproofs.size() != 1)
           {

@@ -116,13 +116,7 @@ static const struct {
 } testnet_hard_forks[] = {
   // version 1 from the start of the blockchain
   { 1, 1, 0, 1520965547, 0 },
-  { 2, 5, 0, 1521995547, 100 },
-  // version 2 starts from block 3000.
-  { 7, 10, 0, 1522235573, 100 },
-  { 8, 15, 0, 1523198945, 100 },
-  { 9, 20, 0, 1523198950, 100 },
-  { 10, 34, 0, 1523199950, 100 },
-  { 11, 50, 0, 1541063718, 100 },
+  { 11, 4, 0, 1541063718, 100 },
   // version 12 starts from block 268000 around 02/07/2019.
   { 12, 100, 0, 1556537316, 100 },
 
@@ -2829,18 +2823,14 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
           mixin = in_to_key.key_offsets.size() - 1;
       }
     }
-    if (hf_version > HF_VERSION_MIN_MIXIN_10 && mixin > 10)
+    
+    if ((hf_version >= HF_VERSION_MIN_MIXIN_10 && mixin > 10))
     {
       MERROR_VER("Tx " << get_transaction_hash(tx) << " has invalid ring size (" << (mixin + 1) << "), it should be 11");
       tvc.m_low_mixin = true;
       return false;
     } 
-    else if (((hf_version == HF_VERSION_MIN_MIXIN_10 || hf_version == HF_VERSION_MIN_MIXIN_10+1) && mixin != 10) || (hf_version >= HF_VERSION_MIN_MIXIN_10+2 && mixin > 10))
-    {
-      MERROR_VER("Tx " << get_transaction_hash(tx) << " has invalid ring size (" << (mixin + 1) << "), it should be 11");
-      tvc.m_low_mixin = true;
-      return false;
-    }
+
     if (mixin < min_mixin)
     {
       if (n_unmixable == 0)

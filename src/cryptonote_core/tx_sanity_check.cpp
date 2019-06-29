@@ -69,7 +69,7 @@ bool tx_sanity_check(Blockchain &blockchain, const cryptonote::blobdata &tx_blob
       rct_indices.insert(offset);
     n_indices += in_to_key.key_offsets.size();
   }
-
+/* 
   if (n_indices <= 10)
   {
     MERROR("n_indices is only " << n_indices);
@@ -93,7 +93,7 @@ bool tx_sanity_check(Blockchain &blockchain, const cryptonote::blobdata &tx_blob
     MERROR("median is " << median << "/" << n_available);
     return false;
   }
-
+*/
   return true;
 }
 

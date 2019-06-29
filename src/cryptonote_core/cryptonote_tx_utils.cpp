@@ -106,8 +106,6 @@ namespace cryptonote
     if (version >= HF_VERSION_DEV_FEE) {
       get_development_wallet_address(nettype, info);
       shares.emplace_back(block_reward_share{"development", get_development_reward(block_reward), info.address});
-      get_marketing_wallet_address(nettype, info);
-      shares.emplace_back(block_reward_share{"marketing", get_marketing_reward(block_reward), info.address});
     }
 
     return shares;
@@ -115,12 +113,7 @@ namespace cryptonote
 
   uint64_t get_development_reward(uint64_t block_reward)
   {
-    return block_reward * 20 / 100; // 20%
-  }
-
-  uint64_t get_marketing_reward(uint64_t block_reward)
-  {
-    return block_reward * 10 / 100; // 10%
+    return block_reward * 30 / 100; // 30%
   }
 
   bool get_deterministic_output_key(const account_public_address& address, const keypair& tx_key, size_t output_index, crypto::public_key& output_key)
@@ -148,25 +141,6 @@ namespace cryptonote
         break;
       case MAINNET:
         cryptonote::get_account_address_from_str(address, nettype, ::config::stagenet::DEVELOPMENT_WALLET_ADDRESS);
-        break;
-      default:
-        return false;
-    }
-    return true;
-  }
-
-  bool get_marketing_wallet_address(const network_type nettype, cryptonote::address_parse_info &address)
-  {
-    switch (nettype)
-    {
-      case STAGENET:
-        cryptonote::get_account_address_from_str(address, nettype, ::config::stagenet::MARKETING_WALLET_ADDRESS);
-        break;
-      case TESTNET:
-        cryptonote::get_account_address_from_str(address, nettype, ::config::testnet::MARKETING_WALLET_ADDRESS);
-        break;
-      case MAINNET:
-        cryptonote::get_account_address_from_str(address, nettype, ::config::MARKETING_WALLET_ADDRESS);
         break;
       default:
         return false;
