@@ -2154,7 +2154,7 @@ bool simple_wallet::welcome(const std::vector<std::string> &args)
   message_writer() << tr("Flaws in Italo may be discovered in the future, and attacks may be developed to peek under some");
   message_writer() << tr("of the layers of privacy Italo provides. Be safe and practice defense in depth.");
   message_writer() << "";
-  message_writer() << tr("Welcome to Italo and financial privacy. For more information, see https://getitalo.org/");
+  message_writer() << tr("Welcome to Italo and financial privacy. For more information, see https://italo.network");
   return true;
 }
 
