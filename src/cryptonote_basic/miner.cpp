@@ -30,15 +30,16 @@
 
 #include <sstream>
 #include <numeric>
-#include <boost/utility/value_init.hpp>
 #include <boost/interprocess/detail/atomic.hpp>
 #include <boost/algorithm/string.hpp>
 #include "misc_language.h"
 #include "syncobj.h"
 #include "cryptonote_basic_impl.h"
 #include "cryptonote_format_utils.h"
+#include "cryptonote_core/cryptonote_tx_utils.h"
 #include "file_io_utils.h"
 #include "common/command_line.h"
+#include "common/util.h"
 #include "string_coding.h"
 #include "string_tools.h"
 #include "storages/portable_storage_template_helper.h"
@@ -61,7 +62,9 @@
   #include <devstat.h>
   #include <errno.h>
   #include <fcntl.h>
+#if defined(__amd64__) || defined(__i386__) || defined(__x86_64__)
   #include <machine/apm_bios.h>
+#endif
   #include <stdio.h>
   #include <sys/resource.h>
   #include <sys/sysctl.h>
@@ -91,7 +94,7 @@ namespace cryptonote
     const command_line::arg_descriptor<std::string> arg_extra_messages =  {"extra-messages-file", "Specify file for extra messages to include into coinbase transactions", "", true};
     const command_line::arg_descriptor<std::string> arg_start_mining =    {"start-mining", "Specify wallet address to mining for", "", true};
     const command_line::arg_descriptor<uint32_t>      arg_mining_threads =  {"mining-threads", "Specify mining threads count", 0, true};
-    const command_line::arg_descriptor<bool>        arg_bg_mining_enable =  {"bg-mining-enable", "enable/disable background mining", true, true};
+    const command_line::arg_descriptor<bool>        arg_bg_mining_enable =  {"bg-mining-enable", "enable background mining", true, true};
     const command_line::arg_descriptor<bool>        arg_bg_mining_ignore_battery =  {"bg-mining-ignore-battery", "if true, assumes plugged in when unable to query system power status", false, true};    
     const command_line::arg_descriptor<uint64_t>    arg_bg_mining_min_idle_interval_seconds =  {"bg-mining-min-idle-interval", "Specify min lookback interval in seconds for determining idle state", miner::BACKGROUND_MINING_DEFAULT_MIN_IDLE_INTERVAL_IN_SECONDS, true};
     const command_line::arg_descriptor<uint16_t>     arg_bg_mining_idle_threshold_percentage =  {"bg-mining-idle-threshold", "Specify minimum avg idle percentage over lookback interval", miner::BACKGROUND_MINING_DEFAULT_IDLE_THRESHOLD_PERCENTAGE, true};
@@ -99,12 +102,13 @@ namespace cryptonote
   }
 
 
-  miner::miner(i_miner_handler* phandler):m_stop(1),
-    m_template(boost::value_initialized<block>()),
+  miner::miner(i_miner_handler* phandler, const get_block_hash_t &gbh):m_stop(1),
+    m_template{},
     m_template_no(0),
     m_diffic(0),
     m_thread_index(0),
     m_phandler(phandler),
+    m_gbh(gbh),
     m_height(0),
     m_threads_active(0),
     m_pausers_count(0),
@@ -430,6 +434,7 @@ namespace cryptonote
   {
     boost::interprocess::ipcdetail::atomic_write32(&m_stop, 1);
   }
+  extern "C" void rx_stop_mining(void);
   //-----------------------------------------------------------------------------------------------------
   bool miner::stop()
   {
@@ -462,15 +467,16 @@ namespace cryptonote
     MINFO("Mining has been stopped, " << m_threads.size() << " finished" );
     m_threads.clear();
     m_threads_autodetect.clear();
+    rx_stop_mining();
     return true;
   }
   //-----------------------------------------------------------------------------------------------------
-  bool miner::find_nonce_for_given_block(block& bl, const difficulty_type& diffic, uint64_t height)
+  bool miner::find_nonce_for_given_block(const get_block_hash_t &gbh, block& bl, const difficulty_type& diffic, uint64_t height)
   {
     for(; bl.nonce != std::numeric_limits<uint32_t>::max(); bl.nonce++)
     {
       crypto::hash h;
-      get_block_longhash(bl, h, height);
+      gbh(bl, height, tools::get_max_concurrency(), h);
 
       if(check_hash(h, diffic))
       {
@@ -566,7 +572,7 @@ namespace cryptonote
 
       b.nonce = nonce;
       crypto::hash h;
-      get_block_longhash(b, h, height);
+      m_gbh(b, height, tools::get_max_concurrency(), h);
 
       if(check_hash(h, local_diff))
       {
@@ -1082,6 +1088,7 @@ namespace cryptonote
           return boost::logic::tribool(boost::logic::indeterminate);
         }
 
+#if defined(__amd64__) || defined(__i386__) || defined(__x86_64__)
         apm_info info;
         if( ioctl(fd, APMIO_GETINFO, &info) == -1 ) {
           close(fd);
@@ -1122,6 +1129,7 @@ namespace cryptonote
         LOG_ERROR("sysctlbyname(\"hw.acpi.acline\") output is unexpectedly "
           << n << " bytes instead of the expected " << sizeof(ac) << " bytes.");
         return boost::logic::tribool(boost::logic::indeterminate);
+#endif
       }
       return boost::logic::tribool(ac == 0);
     #endif

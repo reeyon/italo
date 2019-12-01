@@ -26,12 +26,17 @@
 # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+include_directories(SYSTEM ${ZMQ_INCLUDE_PATH})
+
 set(rpc_base_sources
-  rpc_args.cpp)
+  rpc_args.cpp
+  rpc_payment_signature.cpp
+  rpc_handler.cpp)
 
 set(rpc_sources
+  bootstrap_daemon.cpp
   core_rpc_server.cpp
-  rpc_handler.cpp
+  rpc_payment.cpp
   instanciations)
 
 set(daemon_messages_sources
@@ -44,16 +49,20 @@ set(daemon_rpc_server_sources
 
 
 set(rpc_base_headers
-  rpc_args.h)
+  rpc_args.h
+  rpc_payment_signature.h
+  rpc_handler.h)
 
 set(rpc_headers
-  rpc_handler.cpp)
+  rpc_handler.h)
 
 set(daemon_rpc_server_headers)
 
 
 set(rpc_daemon_private_headers
+  bootstrap_daemon.h
   core_rpc_server.h
+  rpc_payment.h
   core_rpc_server_commands_defs.h
   core_rpc_server_error_codes.h)
 

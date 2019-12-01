@@ -37,6 +37,7 @@ using namespace epee;
 #include "common/apply_permutation.h"
 #include "cryptonote_tx_utils.h"
 #include "cryptonote_config.h"
+#include "blockchain.h"
 #include "cryptonote_basic/miner.h"
 #include "cryptonote_basic/tx_extra.h"
 #include "crypto/crypto.h"
@@ -473,7 +474,7 @@ namespace cryptonote
 
     if (shuffle_outs)
     {
-      std::shuffle(destinations.begin(), destinations.end(), std::default_random_engine(crypto::rand<unsigned int>()));
+      std::shuffle(destinations.begin(), destinations.end(), crypto::random_device{});
     }
 
     // sort ins by their key image
@@ -732,23 +733,27 @@ namespace cryptonote
   {
     hw::device &hwdev = sender_account_keys.get_device();
     hwdev.open_tx(tx_key);
+    try {
+      // figure out if we need to make additional tx pubkeys
+      size_t num_stdaddresses = 0;
+      size_t num_subaddresses = 0;
+      account_public_address single_dest_subaddress;
+      classify_addresses(destinations, change_addr, num_stdaddresses, num_subaddresses, single_dest_subaddress);
+      bool need_additional_txkeys = num_subaddresses > 0 && (num_stdaddresses > 0 || num_subaddresses > 1);
+      if (need_additional_txkeys)
+      {
+        additional_tx_keys.clear();
+        for (const auto &d: destinations)
+          additional_tx_keys.push_back(keypair::generate(sender_account_keys.get_device()).sec);
+      }
 
-    // figure out if we need to make additional tx pubkeys
-    size_t num_stdaddresses = 0;
-    size_t num_subaddresses = 0;
-    account_public_address single_dest_subaddress;
-    classify_addresses(destinations, change_addr, num_stdaddresses, num_subaddresses, single_dest_subaddress);
-    bool need_additional_txkeys = num_subaddresses > 0 && (num_stdaddresses > 0 || num_subaddresses > 1);
-    if (need_additional_txkeys)
-    {
-      additional_tx_keys.clear();
-      for (const auto &d: destinations)
-        additional_tx_keys.push_back(keypair::generate(sender_account_keys.get_device()).sec);
+      bool r = construct_tx_with_tx_key(sender_account_keys, subaddresses, sources, destinations, change_addr, extra, tx, unlock_time, tx_key, additional_tx_keys, rct, rct_config, msout);
+      hwdev.close_tx();
+      return r;
+    } catch(...) {
+      hwdev.close_tx();
+      throw;
     }
-
-    bool r = construct_tx_with_tx_key(sender_account_keys, subaddresses, sources, destinations, change_addr, extra, tx, unlock_time, tx_key, additional_tx_keys, rct, rct_config, msout);
-    hwdev.close_tx();
-    return r;
   }
   //---------------------------------------------------------------
   bool construct_tx(const account_keys& sender_account_keys, std::vector<tx_source_entry>& sources, const std::vector<tx_destination_entry>& destinations, const boost::optional<cryptonote::account_public_address>& change_addr, const std::vector<uint8_t> &extra, transaction& tx, uint64_t unlock_time)
@@ -768,7 +773,7 @@ namespace cryptonote
     )
   {
     //genesis block
-    bl = boost::value_initialized<block>();
+    bl = {};
 
     blobdata tx_bl;
     bool r = string_tools::parse_hexstr_to_binbuff(genesis_tx, tx_bl);
@@ -779,9 +784,64 @@ namespace cryptonote
     bl.minor_version = CURRENT_BLOCK_MINOR_VERSION;
     bl.timestamp = 0;
     bl.nonce = nonce;
-    miner::find_nonce_for_given_block(bl, 1, 0);
+    miner::find_nonce_for_given_block([](const cryptonote::block &b, uint64_t height, unsigned int threads, crypto::hash &hash){
+      return cryptonote::get_block_longhash(NULL, b, hash, height, threads);
+    }, bl, 1, 0);
     bl.invalidate_hashes();
     return true;
   }
   //---------------------------------------------------------------
+   void get_altblock_longhash(const block& b, crypto::hash& res, const uint64_t main_height, const uint64_t height, const uint64_t seed_height, const crypto::hash& seed_hash)
+  {
+    blobdata bd = get_block_hashing_blob(b);
+    rx_slow_hash(main_height, seed_height, seed_hash.data, bd.data(), bd.size(), res.data, 0, 1);
+  }
+
+  bool get_block_longhash(const Blockchain *pbc, const block& b, crypto::hash& res, const uint64_t height, const int miners)
+  {
+    
+    blobdata bd = get_block_hashing_blob(b);
+    if (b.major_version >= RX_BLOCK_VERSION)
+    {
+      uint64_t seed_height, main_height;
+      crypto::hash hash;
+      if (pbc != NULL)
+      {
+        seed_height = rx_seedheight(height);
+        hash = pbc->get_pending_block_id_by_height(seed_height);
+        main_height = pbc->get_current_blockchain_height();
+      } else
+      {
+        memset(&hash, 0, sizeof(hash));  // only happens when generating genesis block
+        seed_height = 0;
+        main_height = 0;
+      }
+      rx_slow_hash(main_height, seed_height, hash.data, bd.data(), bd.size(), res.data, miners, 0);
+    } else {
+    const int hf_version              = b.major_version; 
+    crypto::cn_slow_hash_type cn_type = cn_slow_hash_type::cn_r;
+    if (hf_version >= HF_VERSION_POW_VARIANT4)
+      cn_type = cn_slow_hash_type::cn_r;
+    else if (hf_version >= 10)
+      cn_type = crypto::cn_slow_hash_type::heavy_v3;
+    else if (hf_version == 9)
+      cn_type = crypto::cn_slow_hash_type::heavy_v2;
+
+    const int cn_variant = b.major_version >= HF_VERSION_POW_VARIANT4 ? 4 : b.major_version >= 10 ? 3 : b.major_version == 9 ? 2 : b.major_version >= 7 ? 1 : 0;
+    crypto::cn_slow_hash(bd.data(), bd.size(), res, cn_variant, height, cn_type);
+    }
+    return true;
+ }
+
+  crypto::hash get_block_longhash(const Blockchain *pbc, const block& b, const uint64_t height, const int miners)
+  {
+    crypto::hash p = crypto::null_hash;
+    get_block_longhash(pbc, b, p, height, miners);
+    return p;
+  }
+
+  void get_block_longhash_reorg(const uint64_t split_height)
+  {
+    rx_reorg(split_height);
+  }
 }

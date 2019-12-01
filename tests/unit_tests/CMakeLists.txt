@@ -54,6 +54,7 @@ set(unit_tests_sources
   hashchain.cpp
   http.cpp
   keccak.cpp
+  levin.cpp
   logging.cpp
   main.cpp
   memwipe.cpp
@@ -107,7 +108,8 @@ target_link_libraries(unit_tests
     ${Boost_THREAD_LIBRARY}
     ${GTEST_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
-    ${EXTRA_LIBRARIES})
+    ${EXTRA_LIBRARIES}
+    ${ZMQ_LIB})
 set_property(TARGET unit_tests
   PROPERTY
     FOLDER "tests")

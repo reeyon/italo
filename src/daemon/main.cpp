@@ -44,7 +44,6 @@
 #include "rpc/core_rpc_server.h"
 #include "rpc/rpc_args.h"
 #include "daemon/command_line_args.h"
-#include "blockchain_db/db_types.h"
 #include "version.h"
 
 #ifdef STACK_TRACE
@@ -141,6 +140,7 @@ int main(int argc, char const * argv[])
       command_line::add_arg(core_settings, daemon_args::arg_public_node);
       command_line::add_arg(core_settings, daemon_args::arg_zmq_rpc_bind_ip);
       command_line::add_arg(core_settings, daemon_args::arg_zmq_rpc_bind_port);
+      command_line::add_arg(core_settings, daemon_args::arg_zmq_rpc_disabled);
 
       daemonizer::init_options(hidden_options, visible_options);
       daemonize::t_executor::init_options(core_settings);
@@ -223,16 +223,6 @@ int main(int argc, char const * argv[])
       return 1;
     }
 
-    std::string db_type = command_line::get_arg(vm, cryptonote::arg_db_type);
-
-    // verify that blockchaindb type is valid
-    if(!cryptonote::blockchain_valid_db_type(db_type))
-    {
-      std::cout << "Invalid database type (" << db_type << "), available types are: " <<
-        cryptonote::blockchain_db_types(", ") << std::endl;
-      return 0;
-    }
-
     // data_dir
     //   default: e.g. ~/.bititalo/ or ~/.bititalo/testnet
     //   if data-dir argument given:
@@ -311,9 +301,7 @@ int main(int argc, char const * argv[])
         {
           login = tools::login::parse(
             has_rpc_arg ? command_line::get_arg(vm, arg.rpc_login) : std::string(env_rpc_login), false, [](bool verify) {
-#ifdef HAVE_READLINE
-        rdln::suspend_readline pause_readline;
-#endif
+              PAUSE_READLINE();
               return tools::password_container::prompt(verify, "Daemon client password");
             }
           );
@@ -335,9 +323,7 @@ int main(int argc, char const * argv[])
         }
         else
         {
-#ifdef HAVE_READLINE
-          rdln::suspend_readline pause_readline;
-#endif
+          PAUSE_READLINE();
           std::cerr << "Unknown command: " << command.front() << std::endl;
           return 1;
         }

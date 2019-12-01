@@ -10,7 +10,7 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
   - [Research](#research)
   - [Announcements](#announcements)
   - [Translations](#translations)
-  - [Build](#build)
+  - [Build Status](#build-status)
     - [IMPORTANT](#important)
   - [Coverage](#coverage)
   - [Introduction](#introduction)
@@ -20,8 +20,12 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
   - [Contributing](#contributing)
   - [Scheduled software upgrades](#scheduled-software-upgrades)
   - [Release staging schedule and protocol](#release-staging-schedule-and-protocol)
-  - [Compiling Monero from source](#compiling-monero-from-source)
+  - [Compiling Monero from source](#compiling-italo-from-source)
     - [Dependencies](#dependencies)
+  - [Internationalization](#Internationalization)
+  - [Using Tor](#using-tor)
+  - [Debugging](#Debugging)
+  - [Known issues](#known-issues)
 
 ## Development resources
 
@@ -66,7 +70,7 @@ Italo is a private, secure, untraceable, decentralised digital currency. You are
 
 **Untraceability:** By taking advantage of ring signatures, a special property of a certain type of cryptography, Italo is able to ensure that transactions are not only untraceable, but have an optional measure of ambiguity that ensures that transactions cannot easily be tied back to an individual user or computer.
 
-**Decentralization:** The utility of monero depends on its decentralised peer-to-peer consensus network - anyone should be able to run the monero software, validate the integrity of the blockchain, and participate in all aspects of the monero network using consumer-grade commodity hardware. Decentralization of the monero network is maintained by software development that minimizes the costs of running the monero software and inhibits the proliferation of specialized, non-commodity hardware.  
+**Decentralization:** The utility of italo depends on its decentralised peer-to-peer consensus network - anyone should be able to run the italo software, validate the integrity of the blockchain, and participate in all aspects of the italo network using consumer-grade commodity hardware. Decentralization of the italo network is maintained by software development that minimizes the costs of running the italo software and inhibits the proliferation of specialized, non-commodity hardware.  
 
 ## About this project
 
@@ -116,10 +120,11 @@ Dates are provided in the format YYYY-MM-DD.
 | 165000                         | 2018-12-05 | v11               | v13.0.0                | v13.0.4                    | Bug Fixes, Bulletproofs PAD, Fee per byte...  |
 
 X's indicate that these details have not been determined as of commit date.
+* indicates estimate as of commit date
 
 ## Release staging schedule and protocol
 
-Approximately three months prior to a scheduled software upgrade, a branch from Master will be created with the new release version tag. Pull requests that address bugs should then be made to both Master and the new release branch. Pull requests that require extensive review and testing (generally, optimizations and new features) should *not* be made to the release branch.
+Approximately three months prior to a scheduled software upgrade, a branch from master will be created with the new release version tag. Pull requests that address bugs should then be made to both master and the new release branch. Pull requests that require extensive review and testing (generally, optimizations and new features) should *not* be made to the release branch.
 
 ## Compiling Italo from source
 
@@ -134,26 +139,31 @@ sources are also used for statically-linked builds because distribution
 packages often include only shared library binaries (`.so`) but not static
 library archives (`.a`).
 
-| Dep          | Min. version  | Vendored | Debian/Ubuntu pkg  | Arch pkg     | Fedora            | Optional | Purpose        |
-| ------------ | ------------- | -------- | ------------------ | ------------ | ----------------- | -------- | -------------- |
-| GCC          | 4.7.3         | NO       | `build-essential`  | `base-devel` | `gcc`             | NO       |                |
-| CMake        | 3.5           | NO       | `cmake`            | `cmake`      | `cmake`           | NO       |                |
-| pkg-config   | any           | NO       | `pkg-config`       | `base-devel` | `pkgconf`         | NO       |                |
-| Boost        | 1.58          | NO       | `libboost-all-dev` | `boost`      | `boost-devel`     | NO       | C++ libraries  |
-| OpenSSL      | basically any | NO       | `libssl-dev`       | `openssl`    | `openssl-devel`   | NO       | sha256 sum     |
-| libzmq       | 3.0.0         | NO       | `libzmq3-dev`      | `zeromq`     | `cppzmq-devel`    | NO       | ZeroMQ library |
-| OpenPGM      | ?             | NO       | `libpgm-dev`       | `libpgm`     | `openpgm-devel`   | NO       | For ZeroMQ     |
-| libnorm[2]   | ?             | NO       | `libnorm-dev`      |              |               `   | YES      | For ZeroMQ     |
-| libunbound   | 1.4.16        | YES      | `libunbound-dev`   | `unbound`    | `unbound-devel`   | NO       | DNS resolver   |
-| libsodium    | ?             | NO       | `libsodium-dev`    | `libsodium`  | `libsodium-devel` | NO       | cryptography   |
-| libunwind    | any           | NO       | `libunwind8-dev`   | `libunwind`  | `libunwind-devel` | YES      | Stack traces   |
-| liblzma      | any           | NO       | `liblzma-dev`      | `xz`         | `xz-devel`        | YES      | For libunwind  |
-| libreadline  | 6.3.0         | NO       | `libreadline6-dev` | `readline`   | `readline-devel`  | YES      | Input editing  |
-| ldns         | 1.6.17        | NO       | `libldns-dev`      | `ldns`       | `ldns-devel`      | YES      | SSL toolkit    |
-| expat        | 1.1           | NO       | `libexpat1-dev`    | `expat`      | `expat-devel`     | YES      | XML parsing    |
-| GTest        | 1.5           | YES      | `libgtest-dev`[1]  | `gtest`      | `gtest-devel`     | YES      | Test suite     |
-| Doxygen      | any           | NO       | `doxygen`          | `doxygen`    | `doxygen`         | YES      | Documentation  |
-| Graphviz     | any           | NO       | `graphviz`         | `graphviz`   | `graphviz`        | YES      | Documentation  |
+| Dep          | Min. version  | Vendored | Debian/Ubuntu pkg    | Arch pkg     | Fedora              | Optional | Purpose         |
+| ------------ | ------------- | -------- | -------------------- | ------------ | ------------------- | -------- | --------------- |
+| GCC          | 4.7.3         | NO       | `build-essential`    | `base-devel` | `gcc`               | NO       |                 |
+| CMake        | 3.5           | NO       | `cmake`              | `cmake`      | `cmake`             | NO       |                 |
+| pkg-config   | any           | NO       | `pkg-config`         | `base-devel` | `pkgconf`           | NO       |                 |
+| Boost        | 1.58          | NO       | `libboost-all-dev`   | `boost`      | `boost-devel`       | NO       | C++ libraries   |
+| OpenSSL      | basically any | NO       | `libssl-dev`         | `openssl`    | `openssl-devel`     | NO       | sha256 sum      |
+| libzmq       | 3.0.0         | NO       | `libzmq3-dev`        | `zeromq`     | `zeromq-devel`      | NO       | ZeroMQ library  |
+| OpenPGM      | ?             | NO       | `libpgm-dev`         | `libpgm`     | `openpgm-devel`     | NO       | For ZeroMQ      |
+| libnorm[2]   | ?             | NO       | `libnorm-dev`        |              |                     | YES      | For ZeroMQ      |
+| libunbound   | 1.4.16        | YES      | `libunbound-dev`     | `unbound`    | `unbound-devel`     | NO       | DNS resolver    |
+| libsodium    | ?             | NO       | `libsodium-dev`      | `libsodium`  | `libsodium-devel`   | NO       | cryptography    |
+| libunwind    | any           | NO       | `libunwind8-dev`     | `libunwind`  | `libunwind-devel`   | YES      | Stack traces    |
+| liblzma      | any           | NO       | `liblzma-dev`        | `xz`         | `xz-devel`          | YES      | For libunwind   |
+| libreadline  | 6.3.0         | NO       | `libreadline6-dev`   | `readline`   | `readline-devel`    | YES      | Input editing   |
+| ldns         | 1.6.17        | NO       | `libldns-dev`        | `ldns`       | `ldns-devel`        | YES      | SSL toolkit     |
+| expat        | 1.1           | NO       | `libexpat1-dev`      | `expat`      | `expat-devel`       | YES      | XML parsing     |
+| GTest        | 1.5           | YES      | `libgtest-dev`[1]    | `gtest`      | `gtest-devel`       | YES      | Test suite      |
+| Doxygen      | any           | NO       | `doxygen`            | `doxygen`    | `doxygen`           | YES      | Documentation   |
+| Graphviz     | any           | NO       | `graphviz`           | `graphviz`   | `graphviz`          | YES      | Documentation   |
+| lrelease     | ?             | NO       | `qttools5-dev-tools` | `qt5-tools`  | `qt5-linguist`      | YES      | Translations    |
+| libhidapi    | ?             | NO       | `libhidapi-dev`      | `hidapi`     | `hidapi-devel`      | YES      | Hardware wallet |
+| libusb       | ?             | NO       | `libusb-dev`         | `libusb`     | `libusb-devel`      | YES      | Hardware wallet |
+| libprotobuf  | ?             | NO       | `libprotobuf-dev`    | `protobuf`   | `protobuf-devel`    | YES      | Hardware wallet |
+| protoc       | ?             | NO       | `protobuf-compiler`  | `protobuf`   | `protobuf-compiler` | YES      | Hardware wallet |
 
 
 [1] On Debian/Ubuntu `libgtest-dev` only includes sources and headers. You must
@@ -162,7 +172,7 @@ build the library binary manually. This can be done with the following command `
 
 Install all dependencies at once on Debian/Ubuntu:
 
-``` sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev```
+``` sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev qttools5-dev-tools libhidapi-dev libusb-dev libprotobuf-dev protobuf-compiler ```
 
 Install all dependencies at once on macOS with the provided Brewfile:
 ``` brew update && brew bundle --file=contrib/brew/Brewfile ```
@@ -507,11 +517,12 @@ Build italo: `env DEVELOPER_LOCAL_TOOLS=1 BOOST_ROOT=/usr/local make release-sta
 
 You will need to add a few packages to your system. `pkg_add cmake gmake zeromq cppzmq libiconv boost`.
 
-The doxygen and graphviz packages are optional and require the xbase set.
+The `doxygen` and `graphviz` packages are optional and require the xbase set.
+Running the test suite also requires `py-requests` package.
 
-Build monero: `env DEVELOPER_LOCAL_TOOLS=1 BOOST_ROOT=/usr/local gmake release-static`
+Build italo: `env DEVELOPER_LOCAL_TOOLS=1 BOOST_ROOT=/usr/local gmake release-static`
 
-Note: you may encounter the following error, when compiling the latest version of monero as a normal user:
+Note: you may encounter the following error, when compiling the latest version of italo as a normal user:
 
 ```
 LLVM ERROR: out of memory
@@ -573,6 +584,8 @@ You can also cross-compile static binaries on Linux for Windows and macOS with t
   * Requires: `g++-arm-linux-gnueabihf`
 * ```make depends target=aarch64-linux-gnu``` for armv8 binaries.
   * Requires: `g++-aarch64-linux-gnu`
+* ```make depends target=riscv64-linux-gnu``` for RISC V 64 bit binaries.
+  * Requires: `g++-riscv64-linux-gnu`
 
 The required packages are the names for each toolchain on apt. Depending on your distro, they may have different names.
 
@@ -588,11 +601,12 @@ The produced binaries still link libc dynamically. If the binary is compiled on 
 
 Packages are available for
 
-* Ubuntu and [snap supported](https://snapcraft.io/docs/core/install) systems, via a community contributed build.
+* Debian Bullseye and Sid
 
-	snap install italo --beta
-
-Installing a snap is very quick. Snaps are secure. They are isolated with all of their dependencies. Snaps also auto update when a new version is released.
+    ```bash
+    sudo apt install monero
+    ```
+More info and versions in the [Debian package tracker](https://tracker.debian.org/pkg/monero).
 
 * Arch Linux (via [AUR](https://aur.archlinux.org/)):
   - Stable release: [`italo`](https://aur.archlinux.org/packages/italo)
@@ -731,7 +745,13 @@ You can now analyse this core dump with `gdb` as follows:
 
 Print the stack trace with `bt`
 
-* To run italo within gdb:
+ * If a program crashed and cores are managed by systemd, the following can also get a stack trace for that crash:
+
+```bash
+coredumpctl -1 gdb
+```
+
+#### To run italo within gdb:
 
 Type `gdb /path/to/italod`
 
@@ -770,3 +790,20 @@ The output of `mdb_stat -ea <path to blockchain dir>` will indicate inconsistenc
 The output of `mdb_dump -s blocks <path to blockchain dir>` and `mdb_dump -s block_info <path to blockchain dir>` is useful for indicating whether blocks and block_info contain the same keys.
 
 These records are dumped as hex data, where the first line is the key and the second line is the data.
+
+# Known Issues
+
+## Protocols
+
+### Socket-based
+
+Because of the nature of the socket-based protocols that drive italo, certain protocol weaknesses are somewhat unavoidable at this time. While these weaknesses can theoretically be fully mitigated, the effort required (the means) may not justify the ends. As such, please consider taking the following precautions if you are a italo node operator:
+
+- Run `italod` on a "secured" machine. If operational security is not your forte, at a very minimum, have a dedicated a computer running `italod` and **do not** browse the web, use email clients, or use any other potentially harmful apps on your `italod` machine. **Do not click links or load URL/MUA content on the same machine**. Doing so may potentially exploit weaknesses in commands which accept "localhost" and "127.0.0.1".
+- If you plan on hosting a public "remote" node, start `italod` with `--restricted-rpc`. This is a must.
+
+### Blockchain-based
+
+Certain blockchain "features" can be considered "bugs" if misused correctly. Consequently, please consider the following:
+
+- When receiving italo, be aware that it may be locked for an arbitrary time if the sender elected to, preventing you from spending that italo until the lock time expires. You may want to hold off acting upon such a transaction until the unlock time lapses. To get a sense of that time, you can consider the remaining blocktime until unlock as seen in the `show_transfers` command.
