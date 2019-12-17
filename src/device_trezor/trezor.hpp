@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2018, The Italo Project
+// Copyright (c) 2017-2019, The Monero Project
 //
 // All rights reserved.
 //
@@ -37,7 +37,7 @@
 #include "trezor/messages/messages.pb.h"
 #include "trezor/messages/messages-common.pb.h"
 #include "trezor/messages/messages-management.pb.h"
-#include "trezor/messages/messages-italo.pb.h"
+#include "trezor/messages/messages-monero.pb.h"
 #include "trezor/protocol.hpp"
 #endif
 

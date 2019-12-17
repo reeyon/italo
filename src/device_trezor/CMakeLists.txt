@@ -1,4 +1,4 @@
-# Copyright (c) 2014-2017, The Italo Project
+# Copyright (c) 2014-2019, The Monero Project
 #
 # All rights reserved.
 #
@@ -30,14 +30,14 @@ set(TREZOR_PROTOB_H
         trezor/messages/messages.pb.h
         trezor/messages/messages-common.pb.h
         trezor/messages/messages-management.pb.h
-        trezor/messages/messages-italo.pb.h
+        trezor/messages/messages-monero.pb.h
 )
 
 set(TREZOR_PROTOB_CPP
         trezor/messages/messages.pb.cc
         trezor/messages/messages-common.pb.cc
         trezor/messages/messages-management.pb.cc
-        trezor/messages/messages-italo.pb.cc
+        trezor/messages/messages-monero.pb.cc
 )
 
 set(trezor_headers
