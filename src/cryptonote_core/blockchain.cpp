@@ -117,10 +117,23 @@ static const struct {
   difficulty_type diff_reset_value;
 } testnet_hard_forks[] = {
   // version 1 from the start of the blockchain
-  { 1, 1, 0, 1520965547, 0 },
-  { 11, 4, 0, 1541063718, 100 },
-  // version 12 starts from block 268000 around 02/07/2019.
-  { 12, 100, 0, 1556537316, 100 },
+    { 1, 1, 0, 1520965547, 0 },
+  // version 2 starts from block 3000.
+  { 2, 5, 0, 1522235573, 100 },
+  // version 7 starts from block 5000. Around 4 or 5 of April
+  { 7, 10, 0, 1522800000, 100 },
+  // version 8 starts from block 5000. Around 4 or 5 of April
+  { 8, 15, 0, 1523198945, 100 },
+  // Version 9 starts from block 20000. Around 5/12/2018
+  { 9, 20, 0, 1525910400, 100 },
+  // Version 10 starts from block 55000. Around 7/03/2018
+  { 10, 25, 0, 1530619200, 100 },
+  // Version 11 starts from block 165000. Around 12/05/2018
+  { 11, 30, 0, 1543968000, 100 },
+  // Version 12 starts from block 324000. Around 07/14/2019
+  { 12, 35, 0, 1563105600, 100 },
+  // Version 13 starts from block 428293. Around 12/08/2019
+  { 13, 40, 0, 1575800581, 0 },
 
 };
 static const uint64_t testnet_hard_fork_version_1_till = 4;
