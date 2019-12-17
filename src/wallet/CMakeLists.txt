@@ -128,7 +128,6 @@ if (BUILD_GUI_DEPS)
             common
             cncrypto
             device
-            hardforks
             ringct
             ringct_basic
             checkpoints
