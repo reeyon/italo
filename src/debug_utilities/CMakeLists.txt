@@ -74,7 +74,7 @@ set(dns_checks_sources
   dns_checks.cpp
   )
 
-monero_add_executable(dns_checks
+italo_add_executable(dns_checks
   ${dns_checks_sources}
   ${dns_checks_private_headers})
 
@@ -89,5 +89,5 @@ target_link_libraries(dns_checks
 
 set_property(TARGET dns_checks
 	PROPERTY
-	OUTPUT_NAME "monero-utils-dns-checks")
+	OUTPUT_NAME "italo-utils-dns-checks")
 
