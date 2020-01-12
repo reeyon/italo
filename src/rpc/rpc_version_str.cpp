@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Monero And Italo Project
+// Copyright (c) 2019, The Monero Project
 // 
 // All rights reserved.
 // 
@@ -25,39 +25,31 @@
 // INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-// 
-// Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
-#pragma once
+#include "rpc_version_str.h"
+#include "version.h"
+#include <regex>
 
-#include "p2p/net_node_common.h"
-#include "cryptonote_protocol/cryptonote_protocol_defs.h"
-#include "cryptonote_basic/connection_context.h"
 namespace cryptonote
 {
-  /************************************************************************/
-  /*                                                                      */
-  /************************************************************************/
-  struct i_cryptonote_protocol
-  {
-    virtual bool relay_block(NOTIFY_NEW_BLOCK::request& arg, cryptonote_connection_context& exclude_context)=0;
-    virtual bool relay_transactions(NOTIFY_NEW_TRANSACTIONS::request& arg, const boost::uuids::uuid& source, epee::net_utils::zone zone)=0;
-    //virtual bool request_objects(NOTIFY_REQUEST_GET_OBJECTS::request& arg, cryptonote_connection_context& context)=0;
-  };
 
-  /************************************************************************/
-  /*                                                                      */
-  /************************************************************************/
-  struct cryptonote_protocol_stub: public i_cryptonote_protocol
-  {
-    virtual bool relay_block(NOTIFY_NEW_BLOCK::request& arg, cryptonote_connection_context& exclude_context)
-    {
-      return false;
-    }
-    virtual bool relay_transactions(NOTIFY_NEW_TRANSACTIONS::request& arg, const boost::uuids::uuid& source, epee::net_utils::zone zone)
-    {
-      return false;
-    }
+namespace rpc
+{
 
-  };
+// Expected format of Monero software version string:
+// 1) Four numbers, one to two digits each, separated by periods
+// 2) Optionally, one of the following suffixes:
+//      a) -release
+//      b) -<hash> where <hash> is exactly nine lowercase hex digits
+
+bool is_version_string_valid(const std::string& str)
+{
+    return std::regex_match(str, std::regex(
+        "^\\d{1,2}(\\.\\d{1,2}){3}(-(release|[0-9a-f]{9}))?$",
+        std::regex_constants::nosubs
+    ));
 }
+
+}  // namespace rpc
+
+}  // namespace cryptonote
