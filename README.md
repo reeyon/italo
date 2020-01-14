@@ -57,7 +57,7 @@ Our researchers are available on IRC in [#italo Dev on Freenode](https://webchat
 
 | Type      | Status |
 |-----------|--------|
-| Travis  | [![Travis Status](https://api.travis-ci.org/italocoin-project/italo.svg?branch=master)](https://travis-ci.org/italocoin-project/italo)
+| WorkFlow  | [![WorkFlow Status](https://github.com/italocoin-project/italo/workflows/master/badge.svg)](https://github.com/italocoin-project/italo/actions)
 | License   | [![License](https://img.shields.io/badge/license-BSD3-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 ## Introduction
