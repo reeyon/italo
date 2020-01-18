@@ -118,6 +118,8 @@ Dates are provided in the format YYYY-MM-DD.
 | 20000                          | 2018-05-17 | v9                | v12.1.0                | v12.1.0                    | Bugs fixed, Heavy Pow |
 | 55000                          | 2018-07-03 | v10               | v12.2.0                | v12.2.0                    | Custom Heavy Pow, Bugs fixed, bulletproofs "exploit???" fixed  |
 | 165000                         | 2018-12-05 | v11               | v13.0.0                | v13.0.4                    | Bug Fixes, Bulletproofs PAD, Fee per byte...  |
+| 324000                         | 2019-07-15 | v12               | v14.0.0                | v14.0.4                    | New PoW based on Cryptonight-R, New block weight algorithm, New slightly more efficient RingCT format...  |
+| 465000                         | 2020-01-27 | v13               | v15.0.0                | v15.0.0                    | New PoW based on random instructions, adapted to CPUs, New daemon RPC: flush_cache, get_public_nodes, set_bootstrap_daemon, Verification speedups...  |
 
 X's indicate that these details have not been determined as of commit date.
 * indicates estimate as of commit date
