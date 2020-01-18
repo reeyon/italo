@@ -106,6 +106,8 @@ static const struct {
   { 11, 165000, 0, 1543968000, 0 },
   // Version 12 starts from block 324000. Around 07/14/2019
   { 12, 324000, 0, 1563105600, 0 },
+  // Version 13 starts from block 465000. Around 27 January of 2020
+  { 13, 465000, 0, 1580126400, 0 },
 };
 static const uint64_t mainnet_hard_fork_version_1_till = 2999;
 
