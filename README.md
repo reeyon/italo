@@ -20,7 +20,7 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
   - [Contributing](#contributing)
   - [Scheduled software upgrades](#scheduled-software-upgrades)
   - [Release staging schedule and protocol](#release-staging-schedule-and-protocol)
-  - [Compiling Monero from source](#compiling-italo-from-source)
+  - [Compiling Italo from source](#compiling-italo-from-source)
     - [Dependencies](#dependencies)
   - [Internationalization](#Internationalization)
   - [Using Tor](#using-tor)
@@ -42,7 +42,7 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 ## Research
 
-The [Monero Research Lab](https://src.italo.network/resources/research-lab/) is an open forum where the community coordinates research into Monero cryptography, protocols, fungibility, analysis, and more. We welcome collaboration and contributions from outside researchers! Because not all Lab work and publications are distributed as traditional preprints or articles, they may be easy to miss if you are conducting literature reviews for your own Monero research. You are encouraged to get in touch with our researchers if you have questions, wish to collaborate, or would like guidance to help avoid unnecessarily duplicating earlier or known work.
+The [Italo Research Lab](https://src.italo.network/resources/research-lab/) is an open forum where the community coordinates research into Italo cryptography, protocols, fungibility, analysis, and more. We welcome collaboration and contributions from outside researchers! Because not all Lab work and publications are distributed as traditional preprints or articles, they may be easy to miss if you are conducting literature reviews for your own Italo research. You are encouraged to get in touch with our researchers if you have questions, wish to collaborate, or would like guidance to help avoid unnecessarily duplicating earlier or known work.
 
 Our researchers are available on IRC in [#italo Dev on Freenode](https://webchat.freenode.net/?randomnick=1&channels=%23italo-dev&prompt=1&uio=d4) or by email:
 
@@ -597,7 +597,7 @@ The produced binaries still link libc dynamically. If the binary is compiled on 
 
 The produced binaries still link libc dynamically. If the binary is compiled on a current distribution, it might not run on an older distribution with an older installation of libc. Passing `-DBACKCOMPAT=ON` to cmake will make sure that the binary will run on systems having at least libc version 2.17.
 
-## Installing Monero from a package
+## Installing Italo from a package
 
 **DISCLAIMER: These packages are not part of this repository or maintained by this project's contributors, and as such, do not go through the same review process to ensure their trustworthiness and security.**
 
@@ -606,9 +606,9 @@ Packages are available for
 * Debian Bullseye and Sid
 
     ```bash
-    sudo apt install monero
+    sudo apt install italo
     ```
-More info and versions in the [Debian package tracker](https://tracker.debian.org/pkg/monero).
+More info and versions in the [Debian package tracker](https://tracker.debian.org/pkg/italo).
 
 * Arch Linux (via [AUR](https://aur.archlinux.org/)):
   - Stable release: [`italo`](https://aur.archlinux.org/packages/italo)
