@@ -1708,6 +1708,7 @@ namespace cryptonote
         res.next_seed_hash = string_tools::pod_to_hex(next_seed_hash);
     }
     res.difficulty = diff;
+    res.reserved_offset = reserved_offset;
 
     blobdata block_blob = t_serializable_object_to_blob(b);
     blobdata hashing_blob = get_block_hashing_blob(b);
