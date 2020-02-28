@@ -44,11 +44,6 @@ using namespace epee;
 
 static const char *DEFAULT_DNS_PUBLIC_ADDR[] =
 {
-  "194.150.168.168",    // CCC (Germany)
-  "80.67.169.40",       // FDN (France)
-  "89.233.43.71",       // http://censurfridns.dk (Denmark)
-  "109.69.8.51",        // punCAT (Spain)
-  "193.58.251.251",     // SkyDNS (Russia)
 };
 
 static boost::mutex instance_lock;
@@ -284,7 +279,7 @@ DNSResolver::DNSResolver() : m_data(new DNSResolverData())
     // should be a valid DNSSEC record, and switch to known good
     // DNSSEC resolvers if verification fails
     bool available, valid;
-    static const char *probe_hostname = "updates.italopulse.org";
+    static const char *probe_hostname = "";
     auto records = get_txt_record(probe_hostname, available, valid);
     if (!valid)
     {
@@ -564,7 +559,7 @@ bool load_txt_records_from_dns(std::vector<std::string> &good_records, const std
 
   if (num_valid_records < 2)
   {
-    LOG_PRINT_L0("WARNING: no two valid DNS TXT records were received");
+    //LOG_PRINT_L0("WARNING: no two valid DNS TXT records were received");
     return false;
   }
 
